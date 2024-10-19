@@ -6,30 +6,30 @@
 
 //Function declaration
 
-
-
-//int my_cd(char **args);
-//int my_ls(char **args);
-//int my_help(char **args);
-//int my_exit(char **args);
-//int my_echo(char **args);
-//int my_rm(char **args);
-//int my_mkdir(char **args);
-//int my_pwd(char **args);
-//int my_wc(char **args);
-//int my_cat(char **args);
-
-
-
 char *get_line()
 {
     char *line = NULL;
+    ssize_t buff = 0;//有符号整数，错误时返回-1
+    
+    if(getline(&line, buff, stdin) == -1)
+    {
+        if(feof(stdin)){
+            exit(0);
+        }
+        else
+        {
+            perror("readline wrong");
+            exit(EXIT_FAILURE);
+        }
+    }
+
     return line;
 }
 
 char **get_split_line(char *line)
 {
     char **split_res = NULL;
+
     return split_res;
 }
 
