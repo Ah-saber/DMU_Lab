@@ -5,12 +5,11 @@
 #include <string.h>
 #include <stdio.h>
 
-//Function declaration
-
 typedef struct{
     char *command;
     char *path;
 }CommandMap;
+
 
 
 CommandMap command_map[] = {
@@ -24,6 +23,7 @@ CommandMap command_map[] = {
     {"wc", "~/myshell/bin/wc"},
 };
 
+//Function declaration
 int command_map_size()
 {
     return sizeof(command_map) / sizeof(CommandMap);
@@ -45,10 +45,11 @@ int call_mycommand(char **args)
 {
     pid_t pid;
     int status;
-
+    
     pid = fork();
     if(pid == 0)
     {
+        //第0位是命令本身，args是为了传递参数
         if(execvp(args[0], args) == -1)
         {
             perror("myshell error"); //只是前缀，后面会有详细错误信息
@@ -67,6 +68,7 @@ int call_mycommand(char **args)
         perror("myshell error");
         //创建失败
     }
+    return 1;
 }
 
 char *get_line()
@@ -123,13 +125,11 @@ char **get_split_line(char *line)
                 fprintf(stderr, "myshell: split_line_tokens allocation error");
                 exit(EXIT_FAILURE);
             }
-
-            token = strtok(NULL, TOKEN_SPLIT);
         }
+        token = strtok(NULL, TOKEN_SPLIT);
     }
     
     tokens[pos] = NULL;
-
     return tokens;
 }
 
@@ -152,6 +152,21 @@ int execute(char **args)
 }
 
 
+char *get_pwdforshell()
+{
+    char *pwd_path = getcwd(NULL, 0);
+    int count_sp = 0;
+    int idx;
+    for(idx = 0; idx < sizeof(pwd_path); idx ++)
+    {
+        if(pwd_path[idx] == '/') ++ count_sp;
+        if(count_sp >= 3) break;
+    }
+
+    pwd_path = pwd_path + idx;
+    return pwd_path;
+}
+
 // Main loop
 void my_shell()
 {
@@ -160,13 +175,15 @@ void my_shell()
     int status = 1;
 
     do{
-       printf("%%");
-       line = get_line();
-       args = get_split_line(line);
-       status = execute(args);
+        char *path = get_pwdforshell();
 
-       free(line);
-       free(args);
+        printf("myshell:~%s%% ", path);
+        line = get_line();
+        args = get_split_line(line);
+        status = execute(args);
+
+        free(line);
+        free(args);
     }while(status);
 }
 
