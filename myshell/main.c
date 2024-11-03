@@ -4,69 +4,87 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
+#include "cd.h"
+#include "help.h"
 
-typedef struct{
-    char *command;
-    char *path;
-}CommandMap;
-
-
-
-CommandMap command_map[] = {
-    {"cd", "~/myshell/bin/cd"},
-    {"help", "~/myshell/bin/help"},
-    {"exit", "~/myshell/bin/exit"},
-    {"ls", "~/myshell/bin/ls"},
-    {"rm", "~/myshell/bin/rm"},
-    {"mkdir", "~/myshell/bin/mkdir"},
-    {"pwd", "~/myshell/bin/pwd"},
-    {"wc", "~/myshell/bin/wc"},
+//-----主进程函数----//
+//这部分命令需要对主进程进行操作
+char *main_function[] = {
+    "cd",
+    "help",
+    "exit",
 };
 
-//Function declaration
-int command_map_size()
-{
-    return sizeof(command_map) / sizeof(CommandMap);
+int (*main_func[])(char **) = {
+    &cd,
+    &help,
+    //&exit,
+};
+
+//获取数量，后面遍历用
+int num_of_mainfunc(){
+    return sizeof(main_function) / sizeof(char *);
 }
 
-char *get_command_path(const char *command)
+
+
+CommandMap get_command(const char *command)
 {
     for(int i = 0; i < command_map_size(); i ++)
     {
         if(strcmp(command, command_map[i].command) == 0)
         {
-            return command_map[i].path;
+            return command_map[i];
         }
     }
-    return NULL;
+    CommandMap m = {NULL, NULL, 0};
+    return m;
 }
 
-int call_mycommand(char **args)
+int call_mycommand(char **args, CommandMap command)
 {
     pid_t pid;
     int status;
-    
-    pid = fork();
-    if(pid == 0)
+
+    //如果需要创建子进程
+    if(command.fork)
     {
-        //第0位是命令本身，args是为了传递参数
-        if(execvp(args[0], args) == -1)
+        pid = fork();
+        char *path = command.path;
+        if(pid == 0)
         {
-            perror("myshell error"); //只是前缀，后面会有详细错误信息
+            //第0位是命令本身，args是为了传递参数
+            if(execvp(path, args) == -1)
+            {
+                perror("myshell exc error"); //只是前缀，后面会有详细错误信息
+            }
+            exit(EXIT_FAILURE); //如果执行到这里说明程序调用不成功
         }
-        exit(EXIT_FAILURE); //如果执行到这里说明程序调用不成功
-    }
-    else if(pid > 0)
-    {
-        //循环等待，实现不断等待子进程与保证子进程的回收
-        do{
-            waitpid(pid, &status, WUNTRACED);
-        }while(!WIFEXITED(status) && !WIFSIGNALED(status));
+        else if(pid > 0)
+        {
+            //循环等待，实现不断等待子进程与保证子进程的回收
+            do{
+                waitpid(pid, &status, WUNTRACED);
+            }while(!WIFEXITED(status) && !WIFSIGNALED(status));
+        }
+        else
+        {
+            perror("myshell exc error");
+            //创建失败
+        }
+        //1为main函数未结束
+        return 1;
     }
     else
     {
-        perror("myshell error");
-        //创建失败
+        for(int i = 0; i < num_of_mainfunc(); i ++)
+        {
+            if(strcmp(command.command, main_function[i]) == 0)
+            {
+                return (*main_func[i])(args);
+            }
+        }
     }
     return 1;
 }
@@ -113,7 +131,7 @@ char **get_split_line(char *line)
     {
         tokens[pos ++] = token;
 
-        if(pos > buffsize)
+        if(pos >= buffsize)
         {
             buffsize += TOKEN_BUFF;
             tokens_backup = tokens; //重申内存之前先保存备份，防止申请失败后无法释放这部分内存
@@ -130,25 +148,26 @@ char **get_split_line(char *line)
     }
     
     tokens[pos] = NULL;
+    printf("%s", tokens[1]);
     return tokens;
 }
 
 int execute(char **args)
 {
-    int status = 1;
 
     if(args[0] == NULL)
     {
         return 1;
     }
 
-    char *path = get_command_path(args[0]);
-    if(path == NULL) 
+    CommandMap command = get_command(args[0]);
+    if(command.command == NULL) 
         puts("Unkonw command");
     else
     {
-        return call_mycommand(args);
+        return call_mycommand(args, command);
     }
+    return 1;
 }
 
 
