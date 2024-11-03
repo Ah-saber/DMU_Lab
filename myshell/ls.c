@@ -136,5 +136,5 @@ int main(int argc, char *argv[])
         puts("");
     }
 
-    return EXIT_SUCCESS;
+    return 1;
 }

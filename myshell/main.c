@@ -149,7 +149,7 @@ char **get_split_line(char *line)
     }
     
     tokens[pos] = NULL;
-    printf("%s", tokens[1]);
+    //printf("%s", tokens[1]);
     return tokens;
 }
 

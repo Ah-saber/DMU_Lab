@@ -4,7 +4,7 @@ CFLAGS = -Wall -g
 
 HEADER = cd.h help.h exit.h
 EXEC = main
-SUB_EXEC = pwd.o ls.o
+SUB_EXEC = pwd.o ls.o rm.o
 SUB_SRC = $(SUB_EXEC):%.c
 
 BIN_DIR = ./bin
