@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -g
 
 
-HEADER = cd.h help.h
+HEADER = cd.h help.h exit.h
 EXEC = main
 SUB_EXEC = pwd.o
 SUB_SRC = $(SUB_EXEC:.o=.c)

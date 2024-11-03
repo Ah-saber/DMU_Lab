@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include "cd.h"
 #include "help.h"
+#include "exit.h"
 
 //-----主进程函数----//
 //这部分命令需要对主进程进行操作
@@ -19,7 +20,7 @@ char *main_function[] = {
 int (*main_func[])(char **) = {
     &cd,
     &help,
-    //&exit,
+    &AS_exit,
 };
 
 //获取数量，后面遍历用
