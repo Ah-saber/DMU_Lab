@@ -1,7 +1,7 @@
 #ifndef EXIT
 #define EXIT
 
-int AS_exit(char **args)
+int as_exit(char **args)
 {
     return 0;
 }

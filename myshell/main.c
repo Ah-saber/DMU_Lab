@@ -18,9 +18,9 @@ char *main_function[] = {
 };
 
 int (*main_func[])(char **) = {
-    &cd,
-    &help,
-    &AS_exit,
+    &as_cd,
+    &as_help,
+    &as_exit,
 };
 
 //获取数量，后面遍历用

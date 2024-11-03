@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 
-int cd(char *argv[])
+int as_cd(char *argv[])
 {
     char *default_path = getenv("HOME");
 
