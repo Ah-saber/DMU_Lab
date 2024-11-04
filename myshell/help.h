@@ -20,11 +20,13 @@ CommandMap command_map[] = {
     {"cd", "", 0, "--change the dir"},
     {"help", "/home/ahsaber/DMU_Lab/myshell/bin/help.o", 0, "--for help"},
     {"exit", "", 0, "--exit"},
-    {"ls", "/home/ahsaber/DMU_Lab/myshell/bin/ls.o", 1, "--list the files"},
-    {"rm", "/home/ahsaber/DMU_Lab/myshell/bin/rm.o", 1, "--remove something"},
-    {"mkdir", "/home/ahsaber/DMU_Lab/myshell/bin/mkdir.o", 1, "--make new dir"},
+    {"ls", "/home/ahsaber/DMU_Lab/myshell/bin/ls.o", 1, "--list the files  --Optional parameters -l"},
+    {"rm", "/home/ahsaber/DMU_Lab/myshell/bin/rm.o", 1, "--remove something  --Optional parameters -d(actually -rf)"},
+    {"mkdir", "/home/ahsaber/DMU_Lab/myshell/bin/mkdir.o", 1, "--make new dir  --Optional parameters -m"},
     {"pwd", "/home/ahsaber/DMU_Lab/myshell/bin/pwd.o", 1, "--print work dir"},
-    {"wc", "/home/ahsaber/DMU_Lab/myshell/bin/wc.o", 1, "--print some file informantions"},
+    {"wc", "/home/ahsaber/DMU_Lab/myshell/bin/wc.o", 1, "--print lines, word, and byte for file"},
+    {"cat", "/home/ahsaber/DMU_Lab/myshell/bin/cat.o", 1, "--print the content of file --Optional parameters -n"},
+    {"echo", "", 0, "--print something"},
 };
 
 //Function declaration

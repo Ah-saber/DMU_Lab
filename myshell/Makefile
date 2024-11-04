@@ -2,9 +2,9 @@ CC = gcc
 CFLAGS = -Wall -g
 
 
-HEADER = cd.h help.h exit.h
+HEADER = cd.h help.h exit.h echo.h
 EXEC = main
-SUB_EXEC = pwd.o ls.o rm.o
+SUB_EXEC = pwd.o ls.o rm.o mkdir.o wc.o cat.o
 SUB_SRC = $(SUB_EXEC):%.c
 
 BIN_DIR = ./bin

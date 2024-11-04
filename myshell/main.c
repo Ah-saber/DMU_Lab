@@ -8,6 +8,7 @@
 #include "cd.h"
 #include "help.h"
 #include "exit.h"
+#include "echo.h"
 
 //-----主进程函数----//
 //这部分命令需要对主进程进行操作
@@ -15,12 +16,14 @@ char *main_function[] = {
     "cd",
     "help",
     "exit",
+    "echo"
 };
 
 int (*main_func[])(char **) = {
     &as_cd,
     &as_help,
     &as_exit,
+    &as_echo,
 };
 
 //获取数量，后面遍历用
@@ -43,7 +46,7 @@ CommandMap get_command(const char *command)
     return m;
 }
 
-int call_mycommand(char **args, CommandMap command)
+int call_mycommand(char **args, CommandMap command, char *line)
 {
     pid_t pid;
     int status;
@@ -83,6 +86,8 @@ int call_mycommand(char **args, CommandMap command)
         {
             if(strcmp(command.command, main_function[i]) == 0)
             {
+                if(!strcmp(command.command, "echo"))
+                    return (*main_func[i])(line);
                 return (*main_func[i])(args);
             }
         }
@@ -108,6 +113,7 @@ char *get_line()
         }
     }
 
+    //puts(line);
     return line;
 }
 
@@ -153,7 +159,7 @@ char **get_split_line(char *line)
     return tokens;
 }
 
-int execute(char **args)
+int execute(char **args, char *line)
 {
 
     if(args[0] == NULL)
@@ -166,7 +172,7 @@ int execute(char **args)
         puts("Unkonw command");
     else
     {
-        return call_mycommand(args, command);
+        return call_mycommand(args, command, line);
     }
     return 1;
 }
@@ -197,10 +203,12 @@ void my_shell()
     do{
         char *path = get_pwdforshell();
 
-        printf("myshell:~%s%% ", path);
+        printf("Ashell:~%s%% ", path);
         line = get_line();
+        char *tmp_line = strdup(line);
         args = get_split_line(line);
-        status = execute(args);
+        
+        status = execute(args, tmp_line);
 
         free(line);
         free(args);
