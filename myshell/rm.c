@@ -71,7 +71,7 @@ void rm_dir(char **dir_name)
 
 int main(int argc, char **argv)
 {
-    printf("%d", argc);
+    //printf("%d", argc);
     
    
     if(argc < 2)

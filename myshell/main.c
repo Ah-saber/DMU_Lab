@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <fcntl.h>
+#include <termios.h>
+#include <dirent.h>
 #include "cd.h"
 #include "help.h"
 #include "exit.h"
@@ -180,7 +182,7 @@ int call_mycommand(char **args, CommandMap command, char *line)
                 //第0位是命令本身，args是为了传递参数
                 if(execvp(path, args) == -1)
                 {
-                    perror("asshell exc"); //只是前缀，后面会有详细错误信息
+                    perror("ashell exc"); //只是前缀，后面会有详细错误信息
                 }
                 exit(EXIT_FAILURE); //如果执行到这里说明程序调用不成功
             }
@@ -216,26 +218,126 @@ int call_mycommand(char **args, CommandMap command, char *line)
     return 1;
 }
 
-char *get_line()
-{
-    char *line = NULL;
-    ssize_t buff = 0;//有符号整数，错误时返回-1
+//---------读入与补全实现----------
+
+void enable_raw_mode() {
+    //设置原始模式，原本为规则模式，即缓冲行等自动执行，维护一些输入输出程序
+    struct termios term;
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag &= ~(ICANON | ECHO);  // 仅关闭行缓冲和回显
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
+
+void disable_raw_mode() {
+    struct termios term;
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag |= ICANON | ECHO;  //还原
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
+
+// 更新 complete_file 函数，实现文件补全
+// 文件补全函数：找到最后一个空格后面的部分进行补全
+int complete_name(char *input) {
+    DIR *dir;
+    struct dirent *entry;
     
-    //好处是不用手动开空间
-    if(getline(&line, &buff, stdin) == -1)
-    {
-        if(feof(stdin)){
-            exit(0);
+    int bk = strlen(input);
+    // 查找最后一个空格的位置
+    char *last_space = strrchr(input, ' ');
+    const char *prefix = (last_space == NULL) ? input : last_space + 1; // 如果没有空格，则从头开始匹配
+    size_t prefix_len = strlen(prefix);
+
+    //puts(input);
+    
+    // 打开当前目录
+    if ((dir = opendir(".")) == NULL) {
+        perror("opendir() error");
+    } else {
+        while ((entry = readdir(dir)) != NULL) {
+            // 匹配文件名的前缀
+            if (strncmp(entry->d_name, prefix, prefix_len) == 0) {
+                // 构建补全后的字符串
+                if (last_space != NULL) {
+                    size_t base_len = last_space - input + 1; // 包含空格的位置
+                    snprintf(input + base_len, 256, "%s", entry->d_name);
+                } else {
+                    snprintf(input, 256, "%s", entry->d_name);  // 没有空格时直接替换整个 input
+                }
+                break;
+            }
         }
-        else
-        {
-            perror("myshell error");
-            exit(EXIT_FAILURE);
-        }
+        closedir(dir);
     }
 
-    //puts(line);
-    return line;
+    return bk;
+}
+
+
+#define BUFF_SIZE 64
+
+char *get_line()
+{
+    int i = 0;
+    int buff = BUFF_SIZE;
+    char *input = malloc(buff * sizeof(char));
+    
+    char *backup;
+
+    if(!input)
+    {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+
+    input[0] = '\0';
+
+    enable_raw_mode();
+
+
+    //printf("Enter command: ");
+    while (1)
+    {
+        char c = getchar();
+        
+        if(i > buff)
+        {
+            buff += BUFF_SIZE;
+            backup = input;
+            input = realloc(input, buff * sizeof(char));
+        }
+
+        // 检查是否按下 Backspace 键（通常为 127 或 8）
+        if ((int)c == 127 || (int)c == 8) {
+            if (strlen(input) > 0) {
+                input[strlen(input) - 1] = '\0';  // 删除最后一个字符
+                printf("\b \b");  // 在终端上退格、清除字符、再退格
+                fflush(stdout); //刷新输出
+            }
+        } 
+        else if (c == '\t') {
+            int bk = complete_name(input); // 文件补全，将匹配结果填入 input
+            for (int j = 0; j < bk; j ++) {
+                printf("\b");
+            }
+            printf("%s", input); // 使用 \r 回到行首更新显示
+            fflush(stdout);
+        } 
+        else if (c == '\n') {
+            printf("\n");
+            break;
+        } 
+        else {
+            strncat(input, &c, 1);
+            i ++; // 记录是否超空间
+            putchar(c);  // 手动回显字符
+        }
+    }
+    //fflush(stdout);
+    printf("\r");
+    disable_raw_mode();
+    
+    if(i > 0) return input;
+    else return NULL;
 }
 
 //设置分隔符
@@ -255,6 +357,8 @@ char **get_split_line(char *line)
         fprintf(stderr, "myshell: split_line_tokens allocation error\n");
         exit(EXIT_FAILURE);
     }
+
+    if(line == NULL) return NULL;
 
     token = strtok(line, TOKEN_SPLIT);
     while(token != NULL)
@@ -284,7 +388,7 @@ char **get_split_line(char *line)
 
 int execute(char **args, char *line)
 {
-
+    if(args == NULL || line == NULL) return 1;
     if(args[0] == NULL)
     {
         return 1;
@@ -328,9 +432,12 @@ void my_shell()
 
         printf("Ashell:~%s%% ", path);
         line = get_line();
-        char *tmp_line = strdup(line);
-        args = get_split_line(line);
+        char *tmp_line = NULL;
+        if(line != NULL)
+            tmp_line = strdup(line);
         
+        args = get_split_line(line);
+        //puts("nihao");
         status = execute(args, tmp_line);
 
         free(line);

@@ -1,11 +1,10 @@
-#ifndef ECHO
-#define ECHO
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
+#ifndef ASECHO
+#define ASECHO
 #ifndef TOKEN_SPLIT
 #define TOKEN_SPLIT " \t\n\r\a"
 #endif
