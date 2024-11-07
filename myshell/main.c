@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <fcntl.h>
 #include "cd.h"
 #include "help.h"
 #include "exit.h"
@@ -32,7 +33,6 @@ int num_of_mainfunc(){
 }
 
 
-
 CommandMap get_command(const char *command)
 {
     for(int i = 0; i < command_map_size(); i ++)
@@ -48,40 +48,161 @@ CommandMap get_command(const char *command)
 
 int call_mycommand(char **args, CommandMap command, char *line)
 {
-    pid_t pid;
+    pid_t pid1, pid2;
     int status;
+    //管道实现
+    int  pipefd[2];
+
+    //重定向实现
+    char *output_file = NULL;
+    for(int i = 0; args[i] != NULL; i ++)
+    {
+        if(strcmp(args[i], ">") == 0)
+        {
+            output_file = args[i + 1];
+            //puts(output_file);
+            args[i] = NULL;
+            break;
+        }
+    }
+
+    //管道找命令
+    bool is_pipe = 0;
+    char **first_command = NULL, **second_command = NULL;
+    for(int i = 0; args[i] != NULL; i ++)
+    {
+        if(!strcmp(args[i], "|"))
+        {
+            is_pipe = 1;
+            first_command = malloc((i + 1) * sizeof(char*));
+            if(first_command == NULL)
+            {
+                perror("allocate char");
+                return 1;
+            }
+
+            memcpy(first_command, args, (i+1) * sizeof(char*));
+            first_command[i] = NULL;
+
+            int j = 1;
+            while(args[j + i] != NULL)
+                j ++;
+
+            second_command = malloc((j + 1) * sizeof(char*));
+            if(second_command == NULL)
+            {
+                perror("allocate char");
+                return 1;
+            }
+
+            memcpy(second_command, args + i + 1, j*sizeof(char*));      
+            break;  
+        }
+    }
+
+
+
 
     //如果需要创建子进程
     if(command.fork)
     {
-        pid = fork();
-        char *path = command.path;
-        if(pid == 0)
+        if(is_pipe)
         {
-            //第0位是命令本身，args是为了传递参数
-            if(execvp(path, args) == -1)
+            CommandMap fir_command = get_command(first_command[0]);
+            CommandMap sec_command = get_command(second_command[0]);
+            if(fir_command.command == NULL || sec_command.command == NULL || fir_command.fork == 0 || sec_command.fork == 0)
             {
-                perror("myshell exc error"); //只是前缀，后面会有详细错误信息
+                puts("Don't support command");
+                return 1;
             }
-            exit(EXIT_FAILURE); //如果执行到这里说明程序调用不成功
-        }
-        else if(pid > 0)
-        {
-            //循环等待，实现不断等待子进程与保证子进程的回收
-            do{
-                waitpid(pid, &status, WUNTRACED);
-            }while(!WIFEXITED(status) && !WIFSIGNALED(status));
+            
+            if (pipe(pipefd) == -1) {
+                perror("pipe");
+                exit(EXIT_FAILURE);
+            }
+            pid1 = fork();
+            if(pid1 == 0)
+            {
+                //管道重定向，写端
+                dup2(pipefd[1], STDOUT_FILENO);
+                close(pipefd[0]);
+                close(pipefd[1]);
+                if(execvp(fir_command.path, first_command) == -1)
+                {
+                    perror("ashell exc");
+                }
+                exit(EXIT_FAILURE);
+            }
+            else
+            {
+                pid2 = fork();
+                if(pid2 == 0)
+                {
+                    //管道重定向,读端
+                    dup2(pipefd[0], STDIN_FILENO);
+                    close(pipefd[1]);
+                    close(pipefd[0]);
+                    if(execvp(sec_command.path, second_command) == -1)
+                    {
+                        perror("ashell exc");
+                    }
+                    exit(EXIT_FAILURE);
+                }
+                //父进程关闭读写，防止除自己影响到管道
+                close(pipefd[0]);
+                close(pipefd[1]);
+
+                //等子进程
+                waitpid(pid1, NULL, 0);
+                waitpid(pid2, NULL, 0);
+            }
+            free(first_command);
+            free(second_command);
         }
         else
         {
-            perror("myshell exc error");
-            //创建失败
+            pid1 = fork();
+            char *path = command.path;
+            if(pid1 == 0)
+            {
+                if(output_file != NULL)
+                {
+                    int fd = open(output_file, O_WRONLY | O_TRUNC | O_CREAT, 0644);
+                    if(fd == -1)
+                    {
+                        perror("openfile");
+                        return 1;
+                    }
+                    //重定向到文件
+                    dup2(fd, STDOUT_FILENO);
+                    close(fd);
+                }
+                //第0位是命令本身，args是为了传递参数
+                if(execvp(path, args) == -1)
+                {
+                    perror("asshell exc"); //只是前缀，后面会有详细错误信息
+                }
+                exit(EXIT_FAILURE); //如果执行到这里说明程序调用不成功
+            }
+            else if(pid1 > 0)
+            {
+                //循环等待，实现不断等待子进程与保证子进程的回收
+                do{
+                    waitpid(pid1, &status, WUNTRACED);
+                }while(!WIFEXITED(status) && !WIFSIGNALED(status));
+            }
+            else
+            {
+                perror("ashell exc");
+                //创建失败
+            }
+            //1为main函数未结束
+            return 1;
         }
-        //1为main函数未结束
-        return 1;
     }
     else
     {
+        //puts(command.command);
         for(int i = 0; i < num_of_mainfunc(); i ++)
         {
             if(strcmp(command.command, main_function[i]) == 0)
@@ -118,7 +239,9 @@ char *get_line()
 }
 
 //设置分隔符
+#ifndef TOKEN_SPLIT
 #define TOKEN_SPLIT " \t\r\n\a"
+#endif
 #define TOKEN_BUFF 64
 
 char **get_split_line(char *line)

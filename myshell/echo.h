@@ -6,7 +6,9 @@
 #include <string.h>
 #include <unistd.h>
 
+#ifndef TOKEN_SPLIT
 #define TOKEN_SPLIT " \t\n\r\a"
+#endif
 
 int as_echo(const char *line)
 {
@@ -30,7 +32,9 @@ int as_echo(const char *line)
 
     puts(real_output);
 
+    free(real_output);
     return 1;
 }
+
 
 #endif
