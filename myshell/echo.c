@@ -3,8 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#ifndef ASECHO
-#define ASECHO
+
 #ifndef TOKEN_SPLIT
 #define TOKEN_SPLIT " \t\n\r\a"
 #endif
@@ -35,5 +34,14 @@ int as_echo(const char *line)
     return 1;
 }
 
-
-#endif
+int main(int argc, char **argv)
+{
+    char *line;
+    if(argc > 1)
+    {
+        line = argv[1];
+        as_echo(line);
+        return 1;
+    }
+    else return 1;
+}

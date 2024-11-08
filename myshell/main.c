@@ -11,7 +11,6 @@
 #include "cd.h"
 #include "help.h"
 #include "exit.h"
-#include "echo.h"
 
 //-----主进程函数----//
 //这部分命令需要对主进程进行操作
@@ -19,14 +18,12 @@ char *main_function[] = {
     "cd",
     "help",
     "exit",
-    "echo"
 };
 
 int (*main_func[])(char **) = {
     &as_cd,
     &as_help,
     &as_exit,
-    &as_echo,
 };
 
 //获取数量，后面遍历用
@@ -103,8 +100,6 @@ int call_mycommand(char **args, CommandMap command, char *line)
     }
 
 
-
-
     //如果需要创建子进程
     if(command.fork)
     {
@@ -129,6 +124,8 @@ int call_mycommand(char **args, CommandMap command, char *line)
                 dup2(pipefd[1], STDOUT_FILENO);
                 close(pipefd[0]);
                 close(pipefd[1]);
+                if(!strcmp(fir_command.command, "echo"))
+                    first_command[1] = line;
                 if(execvp(fir_command.path, first_command) == -1)
                 {
                     perror("ashell exc");
@@ -144,6 +141,8 @@ int call_mycommand(char **args, CommandMap command, char *line)
                     dup2(pipefd[0], STDIN_FILENO);
                     close(pipefd[1]);
                     close(pipefd[0]);
+                    if(!strcmp(sec_command.command, "echo"))
+                        second_command[1] = line;
                     if(execvp(sec_command.path, second_command) == -1)
                     {
                         perror("ashell exc");
@@ -180,6 +179,8 @@ int call_mycommand(char **args, CommandMap command, char *line)
                     close(fd);
                 }
                 //第0位是命令本身，args是为了传递参数
+                if(!strcmp(command.command, "echo"))
+                        args[1] = line;
                 if(execvp(path, args) == -1)
                 {
                     perror("ashell exc"); //只是前缀，后面会有详细错误信息
@@ -209,8 +210,6 @@ int call_mycommand(char **args, CommandMap command, char *line)
         {
             if(strcmp(command.command, main_function[i]) == 0)
             {
-                if(!strcmp(command.command, "echo"))
-                    return (*main_func[i])(line);
                 return (*main_func[i])(args);
             }
         }

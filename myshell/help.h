@@ -26,7 +26,7 @@ CommandMap command_map[] = {
     {"pwd", "/home/ahsaber/DMU_Lab/myshell/bin/pwd.o", 1, "--print work dir"},
     {"wc", "/home/ahsaber/DMU_Lab/myshell/bin/wc.o", 1, "--print lines, word, and byte for file"},
     {"cat", "/home/ahsaber/DMU_Lab/myshell/bin/cat.o", 1, "--print the content of file --Optional parameters -n"},
-    {"echo", "", 0, "--print something"},
+    {"echo", "/home/ahsaber/DMU_Lab/myshell/bin/echo.o", 1, "--print something"},
 };
 
 //Function declaration
