@@ -115,7 +115,8 @@ int main(int argc, char *argv[])
     //执行ls
     if(_L)
     {
-        for(int i = 0; i < file_count; i ++)
+        int i;
+        for(i = 0; i < file_count; i ++)
         {
             char fullpath[1024];
             snprintf(fullpath, sizeof(fullpath), "%s/%s", path, file_name[i]);
@@ -127,7 +128,8 @@ int main(int argc, char *argv[])
     }
     else
     {
-        for(int i = 0; i < file_count; i ++)
+        int i;
+        for(i = 0; i < file_count; i ++)
         {   
             if(!strcmp(file_name[i], ".") || !strcmp(file_name[i], "..")) continue;
             

@@ -41,7 +41,8 @@ int as_help(char **args)
     puts("Welcome to AS_shell");
     puts("The following commands mey be helpful");
     
-    for(int i = 0; i < command_map_size(); i ++)
+    int i;
+    for(i = 0; i < command_map_size(); i ++)
     {
         printf("    %s  ", command_map[i].command);
         printf("    %s\n", command_map[i].help);

@@ -34,7 +34,8 @@ int num_of_mainfunc(){
 
 CommandMap get_command(const char *command)
 {
-    for(int i = 0; i < command_map_size(); i ++)
+    int i;
+    for(i = 0; i < command_map_size(); i ++)
     {
         if(strcmp(command, command_map[i].command) == 0)
         {
@@ -54,7 +55,8 @@ int call_mycommand(char **args, CommandMap command, char *line)
 
     //重定向实现
     char *output_file = NULL;
-    for(int i = 0; args[i] != NULL; i ++)
+    int i;
+    for(i = 0; args[i] != NULL; i ++)
     {
         if(strcmp(args[i], ">") == 0)
         {
@@ -68,7 +70,8 @@ int call_mycommand(char **args, CommandMap command, char *line)
     //管道找命令
     bool is_pipe = 0;
     char **first_command = NULL, **second_command = NULL;
-    for(int i = 0; args[i] != NULL; i ++)
+    int i;
+    for(i = 0; args[i] != NULL; i ++)
     {
         if(!strcmp(args[i], "|"))
         {
@@ -206,7 +209,8 @@ int call_mycommand(char **args, CommandMap command, char *line)
     else
     {
         //puts(command.command);
-        for(int i = 0; i < num_of_mainfunc(); i ++)
+        int i;
+        for(i = 0; i < num_of_mainfunc(); i ++)
         {
             if(strcmp(command.command, main_function[i]) == 0)
             {
@@ -315,7 +319,8 @@ char *get_line()
         } 
         else if (c == '\t') {
             int bk = complete_name(input); // 文件补全，将匹配结果填入 input
-            for (int j = 0; j < bk; j ++) {
+            int j;
+            for (j = 0; j < bk; j ++) {
                 printf("\b");
             }
             printf("%s", input); // 使用 \r 回到行首更新显示
