@@ -1,5 +1,5 @@
 #!/bin/bash
-# 输出学生考勤情
+# 输出学生考勤情况
 
 filename="./01-cnet/"
 echo $filename
