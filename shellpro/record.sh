@@ -52,7 +52,7 @@ do
         else
             id_soft=$(echo "$studentname" | sed 's/^soft0*//')
             index=$(expr "$id_soft")
-            if [ "$index" -ge 0 -a "$index" -le 10000 ]
+       /home/ahsaber/DMU_Lab/shellpro/record.sh     if [ "$index" -ge 0 -a "$index" -le 10000 ]
             then
                 new=$(expr ${student_cnet[$index]} + 1)
                 student_soft[$index]=$new
