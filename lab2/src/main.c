@@ -11,6 +11,8 @@
 #include "cd.h"
 #include "help.h"
 #include "exit.h"
+#include <signal.h>
+
 
 //-----主进程函数----//
 //这部分命令需要对主进程进行操作
@@ -53,9 +55,18 @@ int call_mycommand(char **args, CommandMap command, char *line)
     //管道实现
     int  pipefd[2];
 
+    bool is_background = false;
+    int i;
+    for (i = 0; args[i] != NULL; i++) {
+        if (strcmp(args[i], "&") == 0) {
+            is_background = true;
+            args[i] = NULL; // 移除 '&'s
+            break;
+        }
+    }
+
     //重定向实现
     char *output_file = NULL;
-    int i;
     for(i = 0; args[i] != NULL; i ++)
     {
         if(strcmp(args[i], ">") == 0)
@@ -156,9 +167,14 @@ int call_mycommand(char **args, CommandMap command, char *line)
                 close(pipefd[0]);
                 close(pipefd[1]);
 
-                //等子进程
-                waitpid(pid1, NULL, 0);
-                waitpid(pid2, NULL, 0);
+                if (is_background) {
+                // 后台运行
+                    printf("[Background] Started process with PID: %d  %d\n", pid1, pid2);
+                }
+                else{//等子进程
+                    waitpid(pid1, NULL, 0);
+                    waitpid(pid2, NULL, 0);
+                }
             }
             free(first_command);
             free(second_command);
@@ -182,6 +198,7 @@ int call_mycommand(char **args, CommandMap command, char *line)
                     close(fd);
                 }
                 //第0位是命令本身，args是为了传递参数
+
                 if(!strcmp(command.command, "echo"))
                         args[1] = line;
                 if(execvp(path, args) == -1)
@@ -192,10 +209,16 @@ int call_mycommand(char **args, CommandMap command, char *line)
             }
             else if(pid1 > 0)
             {
+                if(is_background) {
+                // 后台运行
+                    printf("[Background] Started process with PID: %d\n", pid1);
+                }
+                else{
                 //循环等待，实现不断等待子进程与保证子进程的回收
-                do{
-                    waitpid(pid1, &status, WUNTRACED);
-                }while(!WIFEXITED(status) && !WIFSIGNALED(status));
+                    do{
+                        waitpid(pid1, &status, WUNTRACED);
+                    }while(!WIFEXITED(status) && !WIFSIGNALED(status));
+                }
             }
             else
             {
@@ -314,7 +337,7 @@ char *get_line()
             if (c == '[') {
                 c = getchar();  // 读取箭头键的最后一个字符
                 // 忽略上下箭头键
-                if (c == 'A' || c == 'B') {
+                if (c == 'A' || c == 'B' || c == 'C' || c == 'D') {
                     continue;  // 忽略上下箭头键输入
                 }
             }
@@ -435,12 +458,20 @@ char *get_pwdforshell()
     return pwd_path;
 }
 
+void sigchld_handler(int signo) {
+    // 回收所有已结束的子进程
+    while (waitpid(-1, NULL, WNOHANG) > 0);
+}
+
+
 // Main loop
 void my_shell()
 {
     char *line;
     char **args;
     int status = 1;
+
+    signal(SIGCHLD, sigchld_handler);
 
     do{
         char *path = get_pwdforshell();
@@ -452,7 +483,8 @@ void my_shell()
             tmp_line = strdup(line);
         
         args = get_split_line(line);
-        //puts("nihao");
+        //puts(line);
+        //puts(tmp_line);
         status = execute(args, tmp_line);
 
         free(line);

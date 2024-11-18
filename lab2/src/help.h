@@ -18,15 +18,15 @@ typedef struct{
 
 CommandMap command_map[] = {
     {"cd", "", 0, "--change the dir"},
-    {"help", "./bin/help.o", 0, "--for help"},
+    {"help", "", 0, "--for help"},
     {"exit", "", 0, "--exit"},
-    {"ls", "./bin/ls.o", 1, "--list the files  --Optional parameters -l"},
-    {"rm", "./bin/rm.o", 1, "--remove something  --Optional parameters -d(actually -rf)"},
-    {"mkdir", "./bin/mkdir.o", 1, "--make new dir  --Optional parameters -m"},
-    {"pwd", "./bin/pwd.o", 1, "--print work dir"},
-    {"wc", "./bin/wc.o", 1, "--print lines, word, and byte for file"},
-    {"cat", "./bin/cat.o", 1, "--print the content of file --Optional parameters -n"},
-    {"echo", "./bin/echo.o", 1, "--print something"},
+    {"ls", "/home/cnet2948/lab2/bin/ls.o", 1, "--list the files  --Optional parameters -l"},
+    {"rm", "/home/cnet2948/lab2/bin/rm.o", 1, "--remove something  --Optional parameters -d(actually -rf)"},
+    {"mkdir", "/home/cnet2948/lab2/bin/mkdir.o", 1, "--make new dir  --Optional parameters -m"},
+    {"pwd", "/home/cnet2948/lab2/bin/pwd.o", 1, "--print work dir"},
+    {"wc", "/home/cnet2948/lab2/bin/wc.o", 1, "--print lines, word, and byte for file"},
+    {"cat", "/home/cnet2948/lab2/bin/cat.o", 1, "--print the content of file --Optional parameters -n"},
+    {"echo", "/home/cnet2948/lab2/bin/echo.o", 1, "--print something"},
 };
 
 //Function declaration

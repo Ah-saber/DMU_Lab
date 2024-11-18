@@ -3,7 +3,7 @@ CFLAGS = -Wall -g
 
 
 HEADER = cd.h help.h exit.h
-EXEC = main
+EXEC = 2202222948_mysh 
 MAIN = main.c
 SUB_EXEC = pwd.o ls.o rm.o mkdir.o wc.o cat.o echo.o
 SUB_SRC = $(SUB_EXEC):%.c
