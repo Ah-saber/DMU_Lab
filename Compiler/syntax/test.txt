@@ -1,0 +1,22 @@
+main()
+{
+    int a, b;
+    a = 1; b = 2;
+    if(a > 1)
+        a = 0;
+    
+    for(b = 0; b < a; b ++)
+    {
+        a += 1;
+    }
+    
+    while( a >= b )
+    {
+        b += 1; 
+    }
+
+
+    write( a ); 
+
+    int i = 5;
+}
