@@ -73,10 +73,14 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include "lex.yy.c"
+
+    int yyerror(char *msg){
+        fprintf(stderr, "Error at line %d: %s", yylineno, msg);
+    }
     
     #define YYERROR_VERBOSE 1
 
-#line 80 "syntax.tab.c"
+#line 84 "syntax.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -136,12 +140,31 @@ enum yysymbol_kind_t
   YYSYMBOL_RETURN = 29,                    /* RETURN  */
   YYSYMBOL_WRITE = 30,                     /* WRITE  */
   YYSYMBOL_READ = 31,                      /* READ  */
-  YYSYMBOL_YYACCEPT = 32,                  /* $accept  */
-  YYSYMBOL_Program = 33,                   /* Program  */
-  YYSYMBOL_Bool_Expr = 34,                 /* Bool_Expr  */
-  YYSYMBOL_Add_Expr = 35,                  /* Add_Expr  */
-  YYSYMBOL_term = 36,                      /* term  */
-  YYSYMBOL_factor = 37                     /* factor  */
+  YYSYMBOL_CALL = 32,                      /* CALL  */
+  YYSYMBOL_MAIN = 33,                      /* MAIN  */
+  YYSYMBOL_YYACCEPT = 34,                  /* $accept  */
+  YYSYMBOL_Program = 35,                   /* Program  */
+  YYSYMBOL_MainDec = 36,                   /* MainDec  */
+  YYSYMBOL_FunDec = 37,                    /* FunDec  */
+  YYSYMBOL_VarDec = 38,                    /* VarDec  */
+  YYSYMBOL_FunBody = 39,                   /* FunBody  */
+  YYSYMBOL_DecList = 40,                   /* DecList  */
+  YYSYMBOL_StatList = 41,                  /* StatList  */
+  YYSYMBOL_Statements = 42,                /* Statements  */
+  YYSYMBOL_IfStat = 43,                    /* IfStat  */
+  YYSYMBOL_ElseStat = 44,                  /* ElseStat  */
+  YYSYMBOL_WhileStat = 45,                 /* WhileStat  */
+  YYSYMBOL_ForStat = 46,                   /* ForStat  */
+  YYSYMBOL_WriteStat = 47,                 /* WriteStat  */
+  YYSYMBOL_ReadStat = 48,                  /* ReadStat  */
+  YYSYMBOL_CompoundStat = 49,              /* CompoundStat  */
+  YYSYMBOL_ExprStat = 50,                  /* ExprStat  */
+  YYSYMBOL_CallStat = 51,                  /* CallStat  */
+  YYSYMBOL_Expr = 52,                      /* Expr  */
+  YYSYMBOL_Bool_Expr = 53,                 /* Bool_Expr  */
+  YYSYMBOL_Add_Expr = 54,                  /* Add_Expr  */
+  YYSYMBOL_term = 55,                      /* term  */
+  YYSYMBOL_factor = 56                     /* factor  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -470,21 +493,21 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  12
+#define YYFINAL  8
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   25
+#define YYLAST   86
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  32
+#define YYNTOKENS  34
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  6
+#define YYNNTS  23
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  14
+#define YYNRULES  43
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  25
+#define YYNSTATES  90
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   286
+#define YYMAXUTOK   288
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -526,15 +549,18 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    27,    28,    29,    30,    31
+      25,    26,    27,    28,    29,    30,    31,    32,    33
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_int8 yyrline[] =
+static const yytype_uint8 yyrline[] =
 {
-       0,    55,    55,    56,    59,    60,    63,    64,    65,    68,
-      69,    70,    73,    74,    75
+       0,    67,    67,    68,    70,    72,    74,    76,    80,    81,
+      83,    84,    87,    88,    89,    90,    91,    92,    93,    94,
+      96,    97,    99,   101,   103,   105,   107,   109,   111,   112,
+     114,   117,   118,   121,   122,   125,   126,   127,   130,   131,
+     132,   135,   136,   137
 };
 #endif
 
@@ -553,8 +579,11 @@ static const char *const yytname[] =
   "\"end of file\"", "error", "\"invalid token\"", "INT", "ID", "NUM",
   "COMMA", "DOT", "SEMI", "RELOP", "ASSIGNOP", "PLUS", "MINUS", "STAR",
   "DIV", "AND", "OR", "NOT", "LP", "RP", "LB", "RB", "LC", "RC", "IF",
-  "ELSE", "WHILE", "FOR", "STRUCT", "RETURN", "WRITE", "READ", "$accept",
-  "Program", "Bool_Expr", "Add_Expr", "term", "factor", YY_NULLPTR
+  "ELSE", "WHILE", "FOR", "STRUCT", "RETURN", "WRITE", "READ", "CALL",
+  "MAIN", "$accept", "Program", "MainDec", "FunDec", "VarDec", "FunBody",
+  "DecList", "StatList", "Statements", "IfStat", "ElseStat", "WhileStat",
+  "ForStat", "WriteStat", "ReadStat", "CompoundStat", "ExprStat",
+  "CallStat", "Expr", "Bool_Expr", "Add_Expr", "term", "factor", YY_NULLPTR
 };
 
 static const char *
@@ -564,7 +593,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-6)
+#define YYPACT_NINF (-31)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -578,9 +607,15 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -4,     3,    -6,    -2,    12,    -6,    -5,     6,    -6,    -2,
-      -6,    -1,    -6,    -2,    -2,    -2,    -2,    -2,    -6,    -6,
-      -3,     6,     6,    -6,    -6
+      -1,   -12,    13,    16,   -31,    -1,    18,    21,   -31,   -31,
+      25,    25,    46,   -31,   -31,    55,    46,   -31,    59,   -31,
+       3,   -31,    53,   -31,   -31,     0,    34,   -31,    50,    51,
+      52,    10,    67,    68,   -31,   -31,   -31,   -31,   -31,   -31,
+     -31,   -31,   -31,    65,   -31,    32,     6,   -31,     0,   -31,
+      -2,    54,    10,    10,    10,   -31,   -31,    56,   -31,     0,
+       0,     0,     0,     0,   -31,   -31,   -31,    57,    60,    70,
+      61,     1,     6,     6,   -31,   -31,    34,    34,    10,   -31,
+      58,   -31,    73,    34,   -31,    10,   -31,    63,    34,   -31
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -588,21 +623,31 @@ static const yytype_int8 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,    13,    14,     0,     0,     3,     4,     6,     9,     0,
-      13,     0,     1,     0,     0,     0,     0,     0,     2,    12,
-       5,     7,     8,    10,    11
+       0,     0,     0,     0,     2,     0,     0,     0,     1,     3,
+       0,     0,     9,     5,     4,     0,     9,    11,     0,     8,
+       0,     6,    42,    43,    29,     0,     0,     7,     0,     0,
+       0,     0,     0,     0,    10,    12,    13,    14,    16,    15,
+      17,    18,    19,     0,    32,    33,    35,    38,     0,    42,
+       0,     0,     0,     0,     0,    25,    26,     0,    28,     0,
+       0,     0,     0,     0,    31,    41,    27,     0,     0,     0,
+       0,    34,    36,    37,    39,    40,     0,     0,     0,    30,
+      21,    23,     0,     0,    20,     0,    22,     0,     0,    24
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -6,    -6,    14,     2,     7,     8
+     -31,    79,   -31,   -31,   -31,    64,    69,   -31,   -26,   -31,
+     -31,   -31,   -31,   -31,   -31,   -31,   -31,   -31,   -30,    38,
+     -23,   -15,    -9
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     4,     5,     6,     7,     8
+       0,     3,     4,     5,    16,    13,    17,    20,    34,    35,
+      84,    36,    37,    38,    39,    40,    41,    42,    43,    44,
+      45,    46,    47
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -610,39 +655,63 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       1,     2,    10,     2,    13,    11,    14,    15,    14,    15,
-      14,    15,    12,     9,     3,    20,     3,     0,    19,    16,
-      17,    21,    22,    18,    23,    24
+      51,    55,    50,     1,    49,    23,     6,    22,    23,    60,
+      61,    24,    60,    61,    22,    23,     8,    65,    25,    62,
+      63,    25,    67,    68,    69,    26,    27,    28,    25,    29,
+      30,     7,     2,    31,    32,    33,    71,    10,    22,    23,
+      11,    59,    24,    60,    61,    72,    73,    12,    82,    15,
+      80,    81,    25,    74,    75,    87,    26,    86,    28,    18,
+      29,    30,    89,    48,    31,    32,    33,    21,    52,    53,
+      54,    56,    57,    58,    70,    14,    76,    66,    78,    77,
+      79,    85,    88,    83,     9,    19,    64
 };
 
 static const yytype_int8 yycheck[] =
 {
-       4,     5,     4,     5,     9,     3,    11,    12,    11,    12,
-      11,    12,     0,    10,    18,    13,    18,    -1,    19,    13,
-      14,    14,    15,     9,    16,    17
+      26,    31,    25,     4,     4,     5,    18,     4,     5,    11,
+      12,     8,    11,    12,     4,     5,     0,    19,    18,    13,
+      14,    18,    52,    53,    54,    22,    23,    24,    18,    26,
+      27,    18,    33,    30,    31,    32,    59,    19,     4,     5,
+      19,     9,     8,    11,    12,    60,    61,    22,    78,     3,
+      76,    77,    18,    62,    63,    85,    22,    83,    24,     4,
+      26,    27,    88,    10,    30,    31,    32,     8,    18,    18,
+      18,     4,     4,     8,    18,    11,    19,    23,     8,    19,
+      19,     8,    19,    25,     5,    16,    48
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     4,     5,    18,    33,    34,    35,    36,    37,    10,
-       4,    35,     0,     9,    11,    12,    13,    14,    34,    19,
-      35,    36,    36,    37,    37
+       0,     4,    33,    35,    36,    37,    18,    18,     0,    35,
+      19,    19,    22,    39,    39,     3,    38,    40,     4,    40,
+      41,     8,     4,     5,     8,    18,    22,    23,    24,    26,
+      27,    30,    31,    32,    42,    43,    45,    46,    47,    48,
+      49,    50,    51,    52,    53,    54,    55,    56,    10,     4,
+      54,    42,    18,    18,    18,    52,     4,     4,     8,     9,
+      11,    12,    13,    14,    53,    19,    23,    52,    52,    52,
+      18,    54,    55,    55,    56,    56,    19,    19,     8,    19,
+      42,    42,    52,    25,    44,     8,    42,    52,    19,    42
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    32,    33,    33,    34,    34,    35,    35,    35,    36,
-      36,    36,    37,    37,    37
+       0,    34,    35,    35,    36,    37,    38,    39,    40,    40,
+      41,    41,    42,    42,    42,    42,    42,    42,    42,    42,
+      43,    43,    44,    45,    46,    47,    48,    49,    50,    50,
+      51,    52,    52,    53,    53,    54,    54,    54,    55,    55,
+      55,    56,    56,    56
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     3,     1,     1,     3,     1,     3,     3,     1,
-       3,     3,     3,     1,     1
+       0,     2,     1,     2,     4,     4,     3,     4,     2,     0,
+       2,     0,     1,     1,     1,     1,     1,     1,     1,     1,
+       6,     5,     2,     5,     9,     2,     2,     3,     2,     1,
+       4,     3,     1,     1,     3,     1,     3,     3,     1,     3,
+       3,     3,     1,     1
 };
 
 
@@ -1218,86 +1287,260 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 2: /* Program: ID ASSIGNOP Bool_Expr  */
-#line 55 "syntax.y"
-                                                                    {(yyval.node) = createNode((yyloc).first_line); printf("create Program\n");}
-#line 1225 "syntax.tab.c"
+  case 2: /* Program: MainDec  */
+#line 67 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Program\n");}
+#line 1294 "syntax.tab.c"
     break;
 
-  case 3: /* Program: Bool_Expr  */
-#line 56 "syntax.y"
-                                                                    {(yyval.node) = createNode((yyloc).first_line); printf("create Program\n");}
-#line 1231 "syntax.tab.c"
-    break;
-
-  case 4: /* Bool_Expr: Add_Expr  */
-#line 59 "syntax.y"
-                                                                    {(yyval.node) = createNode((yyloc).first_line); printf("create Bool_Expr\n");}
-#line 1237 "syntax.tab.c"
-    break;
-
-  case 5: /* Bool_Expr: Add_Expr RELOP Add_Expr  */
-#line 60 "syntax.y"
-                                                                    {(yyval.node) = createNode((yyloc).first_line); printf("create Bool_Expr\n");}
-#line 1243 "syntax.tab.c"
-    break;
-
-  case 6: /* Add_Expr: term  */
-#line 63 "syntax.y"
-                                                                    {(yyval.node) = createNode((yyloc).first_line); printf("create Add_Expr\n");}
-#line 1249 "syntax.tab.c"
-    break;
-
-  case 7: /* Add_Expr: Add_Expr PLUS term  */
-#line 64 "syntax.y"
-                                                                    {(yyval.node) = createNode((yyloc).first_line); printf("create Add_Expr\n");}
-#line 1255 "syntax.tab.c"
-    break;
-
-  case 8: /* Add_Expr: Add_Expr MINUS term  */
-#line 65 "syntax.y"
-                                                                    {(yyval.node) = createNode((yyloc).first_line); printf("create Add_Expr\n");}
-#line 1261 "syntax.tab.c"
-    break;
-
-  case 9: /* term: factor  */
+  case 3: /* Program: FunDec Program  */
 #line 68 "syntax.y"
-                                                                    {(yyval.node) = createNode((yyloc).first_line); printf("create term\n");}
-#line 1267 "syntax.tab.c"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create EProgramxpr\n");}
+#line 1300 "syntax.tab.c"
     break;
 
-  case 10: /* term: term STAR factor  */
-#line 69 "syntax.y"
-                                                                    {(yyval.node) = createNode((yyloc).first_line); printf("create term\n");}
-#line 1273 "syntax.tab.c"
-    break;
-
-  case 11: /* term: term DIV factor  */
+  case 4: /* MainDec: MAIN LP RP FunBody  */
 #line 70 "syntax.y"
-                                                                    {(yyval.node) = createNode((yyloc).first_line); printf("create term\n");}
-#line 1279 "syntax.tab.c"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create MainDec\n");}
+#line 1306 "syntax.tab.c"
     break;
 
-  case 12: /* factor: LP Add_Expr RP  */
-#line 73 "syntax.y"
-                                                                    {(yyval.node) = createNode((yyloc).first_line); printf("create factor\n");}
-#line 1285 "syntax.tab.c"
+  case 5: /* FunDec: ID LP RP FunBody  */
+#line 72 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create FunDec\n");}
+#line 1312 "syntax.tab.c"
     break;
 
-  case 13: /* factor: ID  */
+  case 6: /* VarDec: INT ID SEMI  */
 #line 74 "syntax.y"
-                                                                    {(yyval.node) = createNode((yyloc).first_line); printf("create factor\n");}
-#line 1291 "syntax.tab.c"
+                                                                                    {(yyval.node) = createNode((yyloc).first_line); printf("create VarDec\n");}
+#line 1318 "syntax.tab.c"
     break;
 
-  case 14: /* factor: NUM  */
-#line 75 "syntax.y"
-                                                                    {(yyval.node) = createNode((yyloc).first_line); printf("create factor\n");}
-#line 1297 "syntax.tab.c"
+  case 7: /* FunBody: LC DecList StatList RC  */
+#line 76 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create FunBody\n");}
+#line 1324 "syntax.tab.c"
+    break;
+
+  case 8: /* DecList: VarDec DecList  */
+#line 80 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create DecList\n");}
+#line 1330 "syntax.tab.c"
+    break;
+
+  case 9: /* DecList: %empty  */
+#line 81 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create DecList\n");}
+#line 1336 "syntax.tab.c"
+    break;
+
+  case 10: /* StatList: StatList Statements  */
+#line 83 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create StatList\n");}
+#line 1342 "syntax.tab.c"
+    break;
+
+  case 11: /* StatList: %empty  */
+#line 84 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create StatList\n");}
+#line 1348 "syntax.tab.c"
+    break;
+
+  case 12: /* Statements: IfStat  */
+#line 87 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Statements\n");}
+#line 1354 "syntax.tab.c"
+    break;
+
+  case 13: /* Statements: WhileStat  */
+#line 88 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Statements\n");}
+#line 1360 "syntax.tab.c"
+    break;
+
+  case 14: /* Statements: ForStat  */
+#line 89 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Statements\n");}
+#line 1366 "syntax.tab.c"
+    break;
+
+  case 15: /* Statements: ReadStat  */
+#line 90 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Statements\n");}
+#line 1372 "syntax.tab.c"
+    break;
+
+  case 16: /* Statements: WriteStat  */
+#line 91 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Statements\n");}
+#line 1378 "syntax.tab.c"
+    break;
+
+  case 17: /* Statements: CompoundStat  */
+#line 92 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Statements\n");}
+#line 1384 "syntax.tab.c"
+    break;
+
+  case 18: /* Statements: ExprStat  */
+#line 93 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Statements\n");}
+#line 1390 "syntax.tab.c"
+    break;
+
+  case 19: /* Statements: CallStat  */
+#line 94 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Statements\n");}
+#line 1396 "syntax.tab.c"
+    break;
+
+  case 20: /* IfStat: IF LP Expr RP Statements ElseStat  */
+#line 96 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create IfStat\n");}
+#line 1402 "syntax.tab.c"
+    break;
+
+  case 21: /* IfStat: IF LP Expr RP Statements  */
+#line 97 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create IfStat\n");}
+#line 1408 "syntax.tab.c"
+    break;
+
+  case 22: /* ElseStat: ELSE Statements  */
+#line 99 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create ElseStat\n");}
+#line 1414 "syntax.tab.c"
+    break;
+
+  case 23: /* WhileStat: WHILE LP Expr RP Statements  */
+#line 101 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create WhileStat\n");}
+#line 1420 "syntax.tab.c"
+    break;
+
+  case 24: /* ForStat: FOR LP Expr SEMI Expr SEMI Expr RP Statements  */
+#line 103 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create ForStat\n");}
+#line 1426 "syntax.tab.c"
+    break;
+
+  case 25: /* WriteStat: WRITE Expr  */
+#line 105 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create WriteStat\n");}
+#line 1432 "syntax.tab.c"
+    break;
+
+  case 26: /* ReadStat: READ ID  */
+#line 107 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create ReadStat\n");}
+#line 1438 "syntax.tab.c"
+    break;
+
+  case 27: /* CompoundStat: LC Statements RC  */
+#line 109 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create CompoundStat\n");}
+#line 1444 "syntax.tab.c"
+    break;
+
+  case 28: /* ExprStat: Expr SEMI  */
+#line 111 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create ExprStat\n");}
+#line 1450 "syntax.tab.c"
+    break;
+
+  case 29: /* ExprStat: SEMI  */
+#line 112 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create ExprStat\n");}
+#line 1456 "syntax.tab.c"
+    break;
+
+  case 30: /* CallStat: CALL ID LP RP  */
+#line 114 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create CallStat\n");}
+#line 1462 "syntax.tab.c"
+    break;
+
+  case 31: /* Expr: ID ASSIGNOP Bool_Expr  */
+#line 117 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Expr\n");}
+#line 1468 "syntax.tab.c"
+    break;
+
+  case 32: /* Expr: Bool_Expr  */
+#line 118 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Expr\n");}
+#line 1474 "syntax.tab.c"
+    break;
+
+  case 33: /* Bool_Expr: Add_Expr  */
+#line 121 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Bool_Expr\n");}
+#line 1480 "syntax.tab.c"
+    break;
+
+  case 34: /* Bool_Expr: Add_Expr RELOP Add_Expr  */
+#line 122 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Bool_Expr\n");}
+#line 1486 "syntax.tab.c"
+    break;
+
+  case 35: /* Add_Expr: term  */
+#line 125 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Add_Expr\n");}
+#line 1492 "syntax.tab.c"
+    break;
+
+  case 36: /* Add_Expr: Add_Expr PLUS term  */
+#line 126 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Add_Expr\n");}
+#line 1498 "syntax.tab.c"
+    break;
+
+  case 37: /* Add_Expr: Add_Expr MINUS term  */
+#line 127 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create Add_Expr\n");}
+#line 1504 "syntax.tab.c"
+    break;
+
+  case 38: /* term: factor  */
+#line 130 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create term\n");}
+#line 1510 "syntax.tab.c"
+    break;
+
+  case 39: /* term: term STAR factor  */
+#line 131 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create term\n");}
+#line 1516 "syntax.tab.c"
+    break;
+
+  case 40: /* term: term DIV factor  */
+#line 132 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create term\n");}
+#line 1522 "syntax.tab.c"
+    break;
+
+  case 41: /* factor: LP Add_Expr RP  */
+#line 135 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create factor\n");}
+#line 1528 "syntax.tab.c"
+    break;
+
+  case 42: /* factor: ID  */
+#line 136 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create factor\n");}
+#line 1534 "syntax.tab.c"
+    break;
+
+  case 43: /* factor: NUM  */
+#line 137 "syntax.y"
+                                                                                {(yyval.node) = createNode((yyloc).first_line); printf("create factor\n");}
+#line 1540 "syntax.tab.c"
     break;
 
 
-#line 1301 "syntax.tab.c"
+#line 1544 "syntax.tab.c"
 
       default: break;
     }
@@ -1495,9 +1738,5 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 77 "syntax.y"
+#line 139 "syntax.y"
 
-
-int yyerror(char *msg){
-    fprintf(stderr, "Error at line %d: %s", yylineno, msg);
-}

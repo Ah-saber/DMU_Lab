@@ -4,8 +4,8 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <unistd.h> 
+    #include "node.h" 
     #include "syntax.tab.h"
-    #include "node.h"
    
     int yycolumn = 1;
     #define YY_USER_ACTION \
@@ -38,14 +38,16 @@ UNTERMINATED_COMMENT  "/*"([^*]|[*]+[^*/])*
 doubleword (>=|<=|!=|==)
 singleword (>|<)
 
-IF \b[iI][fF]\b
-ELSE \b[eE][lL][sS][eE]\b
-FOR \b[fF][oO][rR]\b
-WHILE \b[wW][hH][iI][lL][eE]\b
-INT \b[iI][nN][tT]\b
+IF [iI][fF]
+ELSE [eE][lL][sS][eE]
+FOR [fF][oO][rR]
+WHILE [wW][hH][iI][lL][eE]
+INT [iI][nN][tT]
+MAIN [mM][aA][iI][nN]
 
-WRITE \b[wW][rR][iI][tT][eE]\b
-READ \b[rR][eE][aA][dD]\b
+WRITE [wW][rR][iI][tT][eE]
+READ [rR][eE][aA][dD]
+CALL [cC][aA][lL][lL]
 
 PLUS "+"
 MINUS "-"
@@ -74,7 +76,7 @@ other .
 
 {COMMENT} {
     comments ++; printf("%-8s \t %s\n", "COMMENT", yytext); tmp = yylineno;
-    }
+}
 {UNTERMINATED_COMMENT} {
     if(wrongs == 0) wrong_info = malloc(sizeof(char *)*100);
     if(wrongs >= buff)
@@ -94,8 +96,6 @@ other .
     tmp = yylineno;
     return RELOP;
 }
-{ID} {ids ++;  printf("%-8s \t %s\n", "ID", yytext); tmp = yylineno; return ID;}
-{NUM} {nums ++;  printf("%-8s \t %s\n", "NUM", yytext); tmp = yylineno; return NUM;}
 
 {IF} {printf("%-8s \t %s\n", "IF", yytext); tmp = yylineno; return IF;}
 {ELSE} {printf("%-8s \t %s\n", "ELSE", yytext); tmp = yylineno; return ELSE;}
@@ -104,6 +104,11 @@ other .
 {WRITE} {printf("%-8s \t %s\n", "WRITE", yytext); tmp = yylineno; return WRITE;}
 {INT} {printf("%-8s \t %s\n", "INT", yytext); tmp = yylineno; return INT;}
 {READ} {printf("%-8s \t %s\n", "READ", yytext); tmp = yylineno; return READ;}
+{MAIN} {printf("%-8s \t %s\n", "MAIN", yytext); tmp = yylineno; return MAIN;}
+{CALL} {printf("%-8s \t %s\n", "CALL", yytext); tmp = yylineno; return CALL;}
+
+{ID} {ids ++;  printf("%-8s \t %s\n", "ID", yytext); tmp = yylineno; return ID;}
+{NUM} {nums ++;  printf("%-8s \t %s\n", "NUM", yytext); tmp = yylineno; return NUM;}
 
 {PLUS} {printf("%-8s \t %s\n", "PLUS", yytext); tmp = yylineno; return PLUS;}
 {MINUS} {printf("%-8s \t %s\n", "MINUS", yytext); tmp = yylineno; return MINUS;}

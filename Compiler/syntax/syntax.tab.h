@@ -82,7 +82,9 @@ extern int yydebug;
     STRUCT = 283,                  /* STRUCT  */
     RETURN = 284,                  /* RETURN  */
     WRITE = 285,                   /* WRITE  */
-    READ = 286                     /* READ  */
+    READ = 286,                    /* READ  */
+    CALL = 287,                    /* CALL  */
+    MAIN = 288                     /* MAIN  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -91,11 +93,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 11 "syntax.y"
+#line 15 "syntax.y"
 
     pNode node;
 
-#line 99 "syntax.tab.h"
+#line 101 "syntax.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
