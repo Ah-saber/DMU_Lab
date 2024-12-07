@@ -33,7 +33,7 @@ static inline char* newString(char* origin){
     int length = strlen(origin) + 1;
 
     char* p = (char*)malloc(sizeof(char) * length);
-    assert(P != NULL);
+    assert(p != NULL);
     strncpy(p, origin, length);
     return p;
 }
@@ -50,14 +50,15 @@ static inline pNode createNode(int lineNo, NodeType type,
     curNode->name = newString(name);
 
     va_list valist;
-    va_start(vaList, argc); //point the first val
+    va_start(valist, argc); //point the first val
 
-    pNode tempNode = va_arg(vaList, pNode); //get a arg
+    pNode tempNode = va_arg(valist, pNode); //get a arg
 
     curNode->child = tempNode;
+    //if(tempNode == NULL) return curNode;
     int i;
 
-    for(i = 0; i < argc, i ++)
+    for(i = 1; i < argc; i ++)
     {
         tempNode->brother = va_arg(valist, pNode);
         if(tempNode->brother != NULL)
@@ -66,12 +67,12 @@ static inline pNode createNode(int lineNo, NodeType type,
         }
     }
 
-    va_end(vaList);
+    va_end(valist);
     return curNode;
 }
 
 //leaves
-static inline pNode createToken(int lineNO, NodeType type, char* name, char* value)
+static inline pNode createToken(int lineNo, NodeType type, char* name, char* value)
 {
     pNode tokenNode = (pNode)malloc(sizeof(Node));
 
@@ -80,11 +81,11 @@ static inline pNode createToken(int lineNO, NodeType type, char* name, char* val
     tokenNode->lineNo = lineNo;
     tokenNode->type = type;
 
-    tokenNode->name = newString(tokenName);
+    tokenNode->name = newString(name);
     tokenNode->val = newString(value);
 
     tokenNode->child = NULL;
-    tokenNode->next = NULL;
+    tokenNode->brother = NULL;
 
     return tokenNode;
 }
@@ -115,17 +116,17 @@ static inline void printTreeInfo(pNode curNode, int height)
     int i;
     for(i = 0; i < height; i ++)
     {
-        printf("\t");
+        printf("  ");
     }
 
     printf("%s", curNode->name);
     if(curNode->type == NOT_A_TOKEN)
     {
-        printf("\t(%d)", curNode->lineNo);
+        printf("  (%d)", curNode->lineNo);
     }
-    else if(curNode->type == TOKEN_INT || curNode->type == TOKEN_ID)
+    else if(curNode->type == TOKEN_INT || curNode->type == TOKEN_ID || curNode->type == TOKEN_CHAR)
     {
-        printf("\t%s", curNode->val);
+        printf(":  %s", curNode->val);
     }
     
     puts("");

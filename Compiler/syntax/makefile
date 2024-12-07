@@ -1,4 +1,5 @@
 CC = gcc
+CFLAG = -g
 
 FLEX = flex
 BISON = bison
@@ -13,13 +14,13 @@ EXEC = parser
 all: $(C_LEX) $(C_SYN)  $(EXEC)
 
 $(EXEC): $(MAIN) $(C_SYN)
-	$(CC) $^ -lfl -o $@ 
+	$(CC) $(CFLAG) $^ -lfl -o $@ 
 
 $(C_LEX): lexical.l
 	$(FLEX) $^
 
 $(C_SYN) $(H_SYN): syntax.y $(C_LEX)
-	${BISON} -d $<
+	${BISON} -d -t $<
 
 clean:
 	rm *.yy.c

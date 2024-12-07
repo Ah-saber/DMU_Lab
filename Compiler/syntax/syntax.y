@@ -1,14 +1,34 @@
 %{
-    #include "node.h"  
     #include <stdio.h>
     #include <stdlib.h>
+    #include <stdbool.h>
     #include "lex.yy.c"
+    #include "node.h"
+    extern bool synError;
+    extern char **errors;
 
+    int error_count = 0;
+    int synbuff = 100;
+    char **errors;
+    pNode root = NULL;
     int yyerror(char *msg){
-        fprintf(stderr, "Error at line %d: %s", yylineno, msg);
+        synError = TRUE;
+        if(error_count == 0) errors = (char**)malloc(sizeof(char *)*100);
+        if(error_count >= synbuff)
+        {
+            synbuff += 100;
+            errors = realloc(errors, synbuff * sizeof(char));
+        }
+        errors[error_count] = malloc(256 * sizeof(char));
+        snprintf(errors[error_count], 256, "Error at line %d: %s\n", yylineno, msg);
+        error_count ++;
     }
-    
+    // int yyerror(char* msg){
+    //     fprintf(stderr, "Error type B at line %d: %s.\n", yylineno, msg);
+    // }
     #define YYERROR_VERBOSE 1
+    //#define YYDEBUG 1
+
 %}
 
 // declared types
@@ -40,7 +60,7 @@
 
 // non terminals
 
-%type <node> Program 
+%type <node> Program CodeDec
 %type <node> Bool_Expr Add_Expr
 %type <node> term factor
 %type <node> MainDec FunDec FunBody
@@ -61,79 +81,82 @@
 %left LB RB LP RP 
 %nonassoc ELSE
 
-
 %%
 // Dec
-Program:                MainDec                                                 {$$ = createNode(@$.first_line); printf("create Program\n");}
-    |                   FunDec Program                                          {$$ = createNode(@$.first_line); printf("create EProgramxpr\n");}
+Program:                CodeDec                                                 {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Program", 1, $1); root = $$;}                                                                           
     ;
-MainDec:                MAIN LP RP FunBody                                      {$$ = createNode(@$.first_line); printf("create MainDec\n");}
-    ;   
-FunDec:                 ID LP RP FunBody                                        {$$ = createNode(@$.first_line); printf("create FunDec\n");}             
+CodeDec:                MainDec                                                 {$$ = createNode(@$.first_line, NOT_A_TOKEN, "CodeDec", 1, $1);}
+    |                   FunDec CodeDec                                          {$$ = createNode(@$.first_line, NOT_A_TOKEN, "CodeDec", 2, $1, $2); }
     ;
-VarDec:                 INT ID SEMI                                                 {$$ = createNode(@$.first_line); printf("create VarDec\n");}
+MainDec:                MAIN LP RP FunBody                                      {$$ = createNode(@$.first_line, NOT_A_TOKEN, "MainDec", 4, $1, $2, $3, $4); }
     ;   
-FunBody:                LC DecList StatList RC                                  {$$ = createNode(@$.first_line); printf("create FunBody\n");}
+FunDec:                 ID LP RP FunBody                                        {$$ = createNode(@$.first_line, NOT_A_TOKEN, "FunDec", 4, $1, $2, $3, $4); }             
+    //|                   error FunDec                                            {synError = TRUE;}  
+    ;
+VarDec:                 INT ID SEMI                                             {$$ = createNode(@$.first_line, NOT_A_TOKEN, "VarDec", 3, $1, $2, $3);}
+    |                   INT ID error
+    ;   
+FunBody:                LC DecList StatList RC                                  {$$ = createNode(@$.first_line, NOT_A_TOKEN, "FunBody", 4, $1, $2, $3, $4); }
+    |                   error RC                                                {synError = TRUE; }
     ;
  
  //list
-DecList:                VarDec DecList                                          {$$ = createNode(@$.first_line); printf("create DecList\n");}
-    |                                                                           {$$ = createNode(@$.first_line); printf("create DecList\n");}
+DecList:                VarDec DecList                                          {$$ = createNode(@$.first_line, NOT_A_TOKEN, "DecList", 2, $1, $2); }  
+    |                                                                           {$$ = NULL; }
     ;
-StatList:               StatList Statements                                     {$$ = createNode(@$.first_line); printf("create StatList\n");}
-    |                                                                           {$$ = createNode(@$.first_line); printf("create StatList\n");}
+StatList:               Statements StatList                                     {$$ = createNode(@$.first_line, NOT_A_TOKEN, "StatList", 2, $1, $2); }  
+    |                                                                           {$$ = NULL;}
     ;
 //stat
-Statements:             IfStat                                                  {$$ = createNode(@$.first_line); printf("create Statements\n");}    
-    |                   WhileStat                                               {$$ = createNode(@$.first_line); printf("create Statements\n");}
-    |                   ForStat                                                 {$$ = createNode(@$.first_line); printf("create Statements\n");}
-    |                   ReadStat                                                {$$ = createNode(@$.first_line); printf("create Statements\n");}
-    |                   WriteStat                                               {$$ = createNode(@$.first_line); printf("create Statements\n");}
-    |                   CompoundStat                                            {$$ = createNode(@$.first_line); printf("create Statements\n");}
-    |                   ExprStat                                                {$$ = createNode(@$.first_line); printf("create Statements\n");}
-    |                   CallStat                                                {$$ = createNode(@$.first_line); printf("create Statements\n");}
+Statements:             IfStat                                                  {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Statements", 1, $1); }      
+    |                   WhileStat                                               {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Statements", 1, $1); }  
+    |                   ForStat                                                 {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Statements", 1, $1); }  
+    |                   ReadStat                                                {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Statements", 1, $1); }  
+    |                   WriteStat                                               {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Statements", 1, $1); }  
+    |                   CompoundStat                                            {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Statements", 1, $1); }  
+    |                   ExprStat                                                {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Statements", 1, $1); }  
+    |                   CallStat                                                {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Statements", 1, $1); }  
     ;               
-IfStat:                 IF LP Expr RP Statements ElseStat                       {$$ = createNode(@$.first_line); printf("create IfStat\n");}
-    |                   IF LP Expr RP Statements                                {$$ = createNode(@$.first_line); printf("create IfStat\n");}
+IfStat:                 IF LP Expr RP Statements ElseStat                       {$$ = createNode(@$.first_line, NOT_A_TOKEN, "IfStat", 6, $1, $2, $3, $4, $5, $6); }  
+    |                   IF LP Expr RP Statements                                {$$ = createNode(@$.first_line, NOT_A_TOKEN, "IfStat", 5, $1, $2, $3, $4, $5); }  
     ;       
-ElseStat:               ELSE Statements                                         {$$ = createNode(@$.first_line); printf("create ElseStat\n");}    
+ElseStat:               ELSE Statements                                         {$$ = createNode(@$.first_line, NOT_A_TOKEN, "ElseStat", 2, $1, $2); }      
     ;
-WhileStat:              WHILE LP Expr RP Statements                             {$$ = createNode(@$.first_line); printf("create WhileStat\n");}
+WhileStat:              WHILE LP Expr RP Statements                             {$$ = createNode(@$.first_line, NOT_A_TOKEN, "WhileStat", 5, $1, $2, $3, $4, $5); }  
     ;
-ForStat:                FOR LP Expr SEMI Expr SEMI Expr RP Statements           {$$ = createNode(@$.first_line); printf("create ForStat\n");}    
+ForStat:                FOR LP Expr SEMI Expr SEMI Expr RP Statements           {$$ = createNode(@$.first_line, NOT_A_TOKEN, "ForStat", 9, $1, $2, $3, $4, $5, $6, $7, $8, $9); }      
     ;
-WriteStat:              WRITE Expr                                              {$$ = createNode(@$.first_line); printf("create WriteStat\n");}
+WriteStat:              WRITE Expr                                              {$$ = createNode(@$.first_line, NOT_A_TOKEN, "WriteStat", 2, $1, $2); }  
     ;
-ReadStat:               READ ID                                                 {$$ = createNode(@$.first_line); printf("create ReadStat\n");}    
+ReadStat:               READ ID                                                 {$$ = createNode(@$.first_line, NOT_A_TOKEN, "ReadStat", 2, $1, $2); }      
     ;
-CompoundStat:           LC Statements RC                                        {$$ = createNode(@$.first_line); printf("create CompoundStat\n");}
+CompoundStat:           LC StatList RC                                        {$$ = createNode(@$.first_line, NOT_A_TOKEN, "CompoundStat", 3, $1, $2, $3); }  
+    |                   error RC                                                {synError = TRUE;}
     ;
-ExprStat:               Expr SEMI                                               {$$ = createNode(@$.first_line); printf("create ExprStat\n");}
-    |                   SEMI                                                    {$$ = createNode(@$.first_line); printf("create ExprStat\n");}
+ExprStat:               Expr SEMI                                               {$$ = createNode(@$.first_line, NOT_A_TOKEN, "ExprStat", 2, $1, $2); }  
+    |                   SEMI                                                    {$$ = createNode(@$.first_line, NOT_A_TOKEN, "ExprStat", 1, $1); }  
+    |                   error SEMI                                              {synError = TRUE;}
     ;
-CallStat:               CALL ID LP RP                                           {$$ = createNode(@$.first_line); printf("create CallStat\n");}
+CallStat:               CALL ID LP RP                                           {$$ = createNode(@$.first_line, NOT_A_TOKEN, "CallStat", 4, $1, $2, $3, $4); }  
+    |                   error RP                                                {synError = TRUE;}
     ;
-
-Expr:                   ID ASSIGNOP Bool_Expr                                   {$$ = createNode(@$.first_line); printf("create Expr\n");}
-    |                   Bool_Expr                                               {$$ = createNode(@$.first_line); printf("create Expr\n");}
+//factor
+Expr:                   ID ASSIGNOP Bool_Expr                                   {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 3, $1, $2, $3); }  
+    |                   Bool_Expr                                               {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 1, $1); }   
     ;
-
-Bool_Expr:              Add_Expr                                                {$$ = createNode(@$.first_line); printf("create Bool_Expr\n");}
-    |                   Add_Expr RELOP Add_Expr                                 {$$ = createNode(@$.first_line); printf("create Bool_Expr\n");}
+Bool_Expr:              Add_Expr                                                {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Bool_Expr", 1, $1); }  
+    |                   Add_Expr RELOP Add_Expr                                 {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Bool_Expr", 3, $1, $2, $3); }  
     ;
-
-Add_Expr:               term                                                    {$$ = createNode(@$.first_line); printf("create Add_Expr\n");}
-    |                   Add_Expr PLUS term                                      {$$ = createNode(@$.first_line); printf("create Add_Expr\n");}
-    |                   Add_Expr MINUS term                                     {$$ = createNode(@$.first_line); printf("create Add_Expr\n");}
+Add_Expr:               term                                                    {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Add_Expr", 1, $1); }  
+    |                   Add_Expr PLUS term                                      {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Add_Expr", 3, $1, $2, $3); }  
+    |                   Add_Expr MINUS term                                     {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Add_Expr", 3, $1, $2, $3); }  
     ;
-
-term:                   factor                                                  {$$ = createNode(@$.first_line); printf("create term\n");}
-    |                   term STAR factor                                        {$$ = createNode(@$.first_line); printf("create term\n");}
-    |                   term DIV factor                                         {$$ = createNode(@$.first_line); printf("create term\n");}
+term:                   factor                                                  {$$ = createNode(@$.first_line, NOT_A_TOKEN, "term", 1, $1); }  
+    |                   term STAR factor                                        {$$ = createNode(@$.first_line, NOT_A_TOKEN, "term", 3, $1, $2, $3); }  
+    |                   term DIV factor                                         {$$ = createNode(@$.first_line, NOT_A_TOKEN, "term", 3, $1, $2, $3); }  
     ;
-
-factor:                 LP Add_Expr RP                                          {$$ = createNode(@$.first_line); printf("create factor\n");}
-    |                   ID                                                      {$$ = createNode(@$.first_line); printf("create factor\n");}
-    |                   NUM                                                     {$$ = createNode(@$.first_line); printf("create factor\n");}
+factor:                 LP Add_Expr RP                                          {$$ = createNode(@$.first_line, NOT_A_TOKEN, "factor", 3, $1, $2, $3); }  
+    |                   ID                                                      {$$ = createNode(@$.first_line, NOT_A_TOKEN, "factor", 1, $1); }  
+    |                   NUM                                                     {$$ = createNode(@$.first_line, NOT_A_TOKEN, "factor", 1, $1); }  
     ;
 %%

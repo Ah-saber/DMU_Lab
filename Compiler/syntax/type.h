@@ -6,6 +6,7 @@ typedef enum nodeType{
     TOKEN_INT,  
     TOKEN_ID,
     TOKEN_OTHER,
+    TOKEN_CHAR,
     NOT_A_TOKEN,
 } NodeType;
 
@@ -19,5 +20,5 @@ typedef enum ErrorType{
     MISSING_MAIN,
 } SynErrorType;
 
-
+#endif
 

@@ -535,6 +535,7 @@ char *yytext;
     #include <stdio.h>
     #include <stdlib.h>
     #include <unistd.h> 
+    #include <stdbool.h>
     #include "node.h" 
     #include "syntax.tab.h"
    
@@ -545,6 +546,7 @@ char *yytext;
         yylloc.last_column=yycolumn+yyleng-1; \
         yycolumn+=yyleng;
     
+    extern bool lexError;
 
     int nums = 0;
     int ids = 0;
@@ -556,9 +558,9 @@ char *yytext;
     int buff = 100;
     char **wrong_info;
     int tmp = 0;
-#line 560 "lex.yy.c"
-/*匹配/*，然后是任何非*，或者一个*后不是/多次，或者再匹配多个*最后跟一个/*/
 #line 562 "lex.yy.c"
+/*匹配/*，然后是任何非*，或者一个*后不是/多次，或者再匹配多个*最后跟一个/*/
+#line 564 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -775,10 +777,10 @@ YY_DECL
 		}
 
 	{
-#line 75 "lexical.l"
+#line 77 "lexical.l"
 
 
-#line 782 "lex.yy.c"
+#line 784 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -848,7 +850,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 77 "lexical.l"
+#line 79 "lexical.l"
 {
     comments ++; printf("%-8s \t %s\n", "COMMENT", yytext); tmp = yylineno;
 }
@@ -856,7 +858,7 @@ YY_RULE_SETUP
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 80 "lexical.l"
+#line 82 "lexical.l"
 {
     if(wrongs == 0) wrong_info = malloc(sizeof(char *)*100);
     if(wrongs >= buff)
@@ -872,163 +874,163 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 94 "lexical.l"
+#line 96 "lexical.l"
 {
-    printf("%-8s \t %s\n", yytext, yytext); 
-    tmp = yylineno;
+    yylval.node = createToken(yylineno, TOKEN_OTHER, "RELOP", yytext); return RELOP;
     return RELOP;
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 100 "lexical.l"
-{printf("%-8s \t %s\n", "IF", yytext); tmp = yylineno; return IF;}
+#line 101 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_OTHER, "IF", yytext); return IF; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 101 "lexical.l"
-{printf("%-8s \t %s\n", "ELSE", yytext); tmp = yylineno; return ELSE;}
+#line 102 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_OTHER, "ELSE", yytext); return ELSE; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 102 "lexical.l"
-{printf("%-8s \t %s\n", "FOR", yytext); tmp = yylineno; return FOR;}
+#line 103 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_OTHER, "FOR", yytext); return FOR; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 103 "lexical.l"
-{printf("%-8s \t %s\n", "WHILE", yytext); tmp = yylineno; return WHILE;}
+#line 104 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_OTHER, "WHILE", yytext); return WHILE; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 104 "lexical.l"
-{printf("%-8s \t %s\n", "WRITE", yytext); tmp = yylineno; return WRITE;}
+#line 105 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_OTHER, "WRITE", yytext); return WRITE; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 105 "lexical.l"
-{printf("%-8s \t %s\n", "INT", yytext); tmp = yylineno; return INT;}
+#line 106 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_OTHER, "INT", yytext); return INT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 106 "lexical.l"
-{printf("%-8s \t %s\n", "READ", yytext); tmp = yylineno; return READ;}
+#line 107 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_OTHER, "READ", yytext); return READ; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 107 "lexical.l"
-{printf("%-8s \t %s\n", "MAIN", yytext); tmp = yylineno; return MAIN;}
+#line 108 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_OTHER, "MAIN", yytext); return MAIN; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 108 "lexical.l"
-{printf("%-8s \t %s\n", "CALL", yytext); tmp = yylineno; return CALL;}
+#line 109 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_OTHER, "CALL", yytext); return CALL; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 110 "lexical.l"
-{ids ++;  printf("%-8s \t %s\n", "ID", yytext); tmp = yylineno; return ID;}
+#line 111 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_ID, "ID", yytext); return ID; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 111 "lexical.l"
-{nums ++;  printf("%-8s \t %s\n", "NUM", yytext); tmp = yylineno; return NUM;}
+#line 112 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_INT, "NUM", yytext); return NUM; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 113 "lexical.l"
-{printf("%-8s \t %s\n", "PLUS", yytext); tmp = yylineno; return PLUS;}
+#line 114 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "PLUS", yytext); return PLUS; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 114 "lexical.l"
-{printf("%-8s \t %s\n", "MINUS", yytext); tmp = yylineno; return MINUS;}
+#line 115 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "MINUS", yytext); return MINUS; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 115 "lexical.l"
-{printf("%-8s \t %s\n", "STAR", yytext); tmp = yylineno; return STAR;}
+#line 116 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "STAR", yytext); return STAR; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 116 "lexical.l"
-{printf("%-8s \t %s\n", "DIV", yytext); tmp = yylineno; return DIV;}
+#line 117 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "DIV", yytext); return DIV; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 117 "lexical.l"
-{printf("%-8s \t %s\n", "AND", yytext); tmp = yylineno; return AND;}
+#line 118 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "AND", yytext); return AND; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 118 "lexical.l"
-{printf("%-8s \t %s\n", "OR", yytext); tmp = yylineno; return OR;}
+#line 119 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "OR", yytext); return OR; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 119 "lexical.l"
-{printf("%-8s \t %s\n", "NOT", yytext); tmp = yylineno; return NOT;}
+#line 120 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "NOT", yytext); return NOT; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 120 "lexical.l"
-{printf("%-8s \t %s\n", "DOT", yytext); tmp = yylineno; return DOT;}
+#line 121 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "DOT", yytext); return DOT; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 121 "lexical.l"
-{printf("%-8s \t %s\n", "SEMI", yytext); tmp = yylineno; return SEMI;}
+#line 122 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "SEMI", yytext); return SEMI; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 122 "lexical.l"
-{printf("%-8s \t %s\n", "COMMA", yytext); tmp = yylineno; return COMMA;}
+#line 123 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "COMMA", yytext); return COMMA; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 123 "lexical.l"
-{printf("%-8s \t %s\n", "ASSIGNOP", yytext); tmp = yylineno; return ASSIGNOP;}
+#line 124 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "ASSIGNOP", yytext); return ASSIGNOP; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 125 "lexical.l"
-{printf("%-8s \t %s\n", "LP", yytext); tmp = yylineno; return LP;}
+#line 126 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "LP", yytext); return LP; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 126 "lexical.l"
-{printf("%-8s \t %s\n", "RP", yytext); tmp = yylineno; return RP;}
+#line 127 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "RP", yytext); return RP; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 127 "lexical.l"
-{printf("%-8s \t %s\n", "LB", yytext); tmp = yylineno; return LB;}
+#line 128 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "LB", yytext); return LB; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 128 "lexical.l"
-{printf("%-8s \t %s\n", "RB", yytext); tmp = yylineno; return RB;}
+#line 129 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "RB", yytext); return RB; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 129 "lexical.l"
-{printf("%-8s \t %s\n", "LC", yytext); tmp = yylineno; return LC;}
+#line 130 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "LC", yytext); return LC; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 130 "lexical.l"
-{printf("%-8s \t %s\n", "RC", yytext); tmp = yylineno; return RC;}
+#line 131 "lexical.l"
+{ yylval.node = createToken(yylineno, TOKEN_CHAR, "RC", yytext); return RC; }
 	YY_BREAK
 case 32:
 /* rule 32 can match eol */
 YY_RULE_SETUP
-#line 133 "lexical.l"
-{ if(*yytext = '\n'){ tmp ++; yycolumn = 1; /*列数复位*/ }}
+#line 134 "lexical.l"
+{ if(*yytext == '\n' || *yytext == '\r' ){ tmp ++; yycolumn = 1; /*列数复位*/ }}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 134 "lexical.l"
+#line 135 "lexical.l"
 {
+    lexError = TRUE;
     if(wrongs == 0) wrong_info = (char**)malloc(sizeof(char *)*10);
     if(wrongs >= buff)
     {
@@ -1043,8 +1045,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 146 "lexical.l"
+#line 148 "lexical.l"
 {
+    lexError = TRUE;
     if(wrongs == 0) wrong_info = (char**)malloc(sizeof(char *)*10);
     if(wrongs >= buff)
     {
@@ -1059,10 +1062,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 159 "lexical.l"
+#line 162 "lexical.l"
 ECHO;
 	YY_BREAK
-#line 1066 "lex.yy.c"
+#line 1069 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2079,7 +2082,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 159 "lexical.l"
+#line 162 "lexical.l"
 
 
 // int main(int argc, char **argv)

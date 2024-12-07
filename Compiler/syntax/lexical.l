@@ -4,6 +4,7 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <unistd.h> 
+    #include <stdbool.h>
     #include "node.h" 
     #include "syntax.tab.h"
    
@@ -14,6 +15,7 @@
         yylloc.last_column=yycolumn+yyleng-1; \
         yycolumn+=yyleng;
     
+    extern bool lexError;
 
     int nums = 0;
     int ids = 0;
@@ -92,46 +94,46 @@ other .
 
 
 {RELOP} {
-    printf("%-8s \t %s\n", yytext, yytext); 
-    tmp = yylineno;
+    yylval.node = createToken(yylineno, TOKEN_OTHER, "RELOP", yytext); return RELOP;
     return RELOP;
 }
 
-{IF} {printf("%-8s \t %s\n", "IF", yytext); tmp = yylineno; return IF;}
-{ELSE} {printf("%-8s \t %s\n", "ELSE", yytext); tmp = yylineno; return ELSE;}
-{FOR} {printf("%-8s \t %s\n", "FOR", yytext); tmp = yylineno; return FOR;}
-{WHILE} {printf("%-8s \t %s\n", "WHILE", yytext); tmp = yylineno; return WHILE;}
-{WRITE} {printf("%-8s \t %s\n", "WRITE", yytext); tmp = yylineno; return WRITE;}
-{INT} {printf("%-8s \t %s\n", "INT", yytext); tmp = yylineno; return INT;}
-{READ} {printf("%-8s \t %s\n", "READ", yytext); tmp = yylineno; return READ;}
-{MAIN} {printf("%-8s \t %s\n", "MAIN", yytext); tmp = yylineno; return MAIN;}
-{CALL} {printf("%-8s \t %s\n", "CALL", yytext); tmp = yylineno; return CALL;}
+{IF} { yylval.node = createToken(yylineno, TOKEN_OTHER, "IF", yytext); return IF; }
+{ELSE} { yylval.node = createToken(yylineno, TOKEN_OTHER, "ELSE", yytext); return ELSE; }
+{FOR} { yylval.node = createToken(yylineno, TOKEN_OTHER, "FOR", yytext); return FOR; }
+{WHILE} { yylval.node = createToken(yylineno, TOKEN_OTHER, "WHILE", yytext); return WHILE; }
+{WRITE} { yylval.node = createToken(yylineno, TOKEN_OTHER, "WRITE", yytext); return WRITE; }
+{INT} { yylval.node = createToken(yylineno, TOKEN_OTHER, "INT", yytext); return INT; }
+{READ} { yylval.node = createToken(yylineno, TOKEN_OTHER, "READ", yytext); return READ; }
+{MAIN} { yylval.node = createToken(yylineno, TOKEN_OTHER, "MAIN", yytext); return MAIN; }
+{CALL} { yylval.node = createToken(yylineno, TOKEN_OTHER, "CALL", yytext); return CALL; }
 
-{ID} {ids ++;  printf("%-8s \t %s\n", "ID", yytext); tmp = yylineno; return ID;}
-{NUM} {nums ++;  printf("%-8s \t %s\n", "NUM", yytext); tmp = yylineno; return NUM;}
+{ID} { yylval.node = createToken(yylineno, TOKEN_ID, "ID", yytext); return ID; }
+{NUM} { yylval.node = createToken(yylineno, TOKEN_INT, "NUM", yytext); return NUM; }
 
-{PLUS} {printf("%-8s \t %s\n", "PLUS", yytext); tmp = yylineno; return PLUS;}
-{MINUS} {printf("%-8s \t %s\n", "MINUS", yytext); tmp = yylineno; return MINUS;}
-{STAR} {printf("%-8s \t %s\n", "STAR", yytext); tmp = yylineno; return STAR;}
-{DIV} {printf("%-8s \t %s\n", "DIV", yytext); tmp = yylineno; return DIV;}
-{AND} {printf("%-8s \t %s\n", "AND", yytext); tmp = yylineno; return AND;}
-{OR} {printf("%-8s \t %s\n", "OR", yytext); tmp = yylineno; return OR;}
-{NOT} {printf("%-8s \t %s\n", "NOT", yytext); tmp = yylineno; return NOT;}
-{DOT} {printf("%-8s \t %s\n", "DOT", yytext); tmp = yylineno; return DOT;}
-{SEMI} {printf("%-8s \t %s\n", "SEMI", yytext); tmp = yylineno; return SEMI;}
-{COMMA} {printf("%-8s \t %s\n", "COMMA", yytext); tmp = yylineno; return COMMA;}
-{ASSIGNOP} {printf("%-8s \t %s\n", "ASSIGNOP", yytext); tmp = yylineno; return ASSIGNOP;}
+{PLUS} { yylval.node = createToken(yylineno, TOKEN_CHAR, "PLUS", yytext); return PLUS; }
+{MINUS} { yylval.node = createToken(yylineno, TOKEN_CHAR, "MINUS", yytext); return MINUS; }
+{STAR} { yylval.node = createToken(yylineno, TOKEN_CHAR, "STAR", yytext); return STAR; }
+{DIV} { yylval.node = createToken(yylineno, TOKEN_CHAR, "DIV", yytext); return DIV; }
+{AND} { yylval.node = createToken(yylineno, TOKEN_CHAR, "AND", yytext); return AND; }
+{OR} { yylval.node = createToken(yylineno, TOKEN_CHAR, "OR", yytext); return OR; }
+{NOT} { yylval.node = createToken(yylineno, TOKEN_CHAR, "NOT", yytext); return NOT; }
+{DOT} { yylval.node = createToken(yylineno, TOKEN_CHAR, "DOT", yytext); return DOT; }
+{SEMI} { yylval.node = createToken(yylineno, TOKEN_CHAR, "SEMI", yytext); return SEMI; }
+{COMMA} { yylval.node = createToken(yylineno, TOKEN_CHAR, "COMMA", yytext); return COMMA; }
+{ASSIGNOP} { yylval.node = createToken(yylineno, TOKEN_CHAR, "ASSIGNOP", yytext); return ASSIGNOP; }
 
-{LP} {printf("%-8s \t %s\n", "LP", yytext); tmp = yylineno; return LP;}
-{RP} {printf("%-8s \t %s\n", "RP", yytext); tmp = yylineno; return RP;}
-{LB} {printf("%-8s \t %s\n", "LB", yytext); tmp = yylineno; return LB;}
-{RB} {printf("%-8s \t %s\n", "RB", yytext); tmp = yylineno; return RB;}
-{LC} {printf("%-8s \t %s\n", "LC", yytext); tmp = yylineno; return LC;}
-{RC} {printf("%-8s \t %s\n", "RC", yytext); tmp = yylineno; return RC;}
+{LP} { yylval.node = createToken(yylineno, TOKEN_CHAR, "LP", yytext); return LP; }
+{RP} { yylval.node = createToken(yylineno, TOKEN_CHAR, "RP", yytext); return RP; }
+{LB} { yylval.node = createToken(yylineno, TOKEN_CHAR, "LB", yytext); return LB; }
+{RB} { yylval.node = createToken(yylineno, TOKEN_CHAR, "RB", yytext); return RB; }
+{LC} { yylval.node = createToken(yylineno, TOKEN_CHAR, "LC", yytext); return LC; }
+{RC} { yylval.node = createToken(yylineno, TOKEN_CHAR, "RC", yytext); return RC; }
 
 
-{IGNORE} { if(*yytext = '\n'){ tmp ++; yycolumn = 1; /*列数复位*/ }}
+{IGNORE} { if(*yytext == '\n' || *yytext == '\r' ){ tmp ++; yycolumn = 1; /*列数复位*/ }}
 {NOTID} {
+    lexError = TRUE;
     if(wrongs == 0) wrong_info = (char**)malloc(sizeof(char *)*10);
     if(wrongs >= buff)
     {
@@ -144,6 +146,7 @@ other .
     tmp = yylineno;
 }
 {other} {
+    lexError = TRUE;
     if(wrongs == 0) wrong_info = (char**)malloc(sizeof(char *)*10);
     if(wrongs >= buff)
     {
