@@ -18,6 +18,7 @@ extern char** wrong_info;
 extern int wrongs;
 extern char** errors;
 extern int error_count;
+extern int yynerrs;
 
 
 int main(int argc, char** argv)
@@ -57,7 +58,7 @@ int main(int argc, char** argv)
 
     if(synError)
     {
-        printf("Total syn wrongs: %d\n", error_count);
+        printf("Total syn wrongs: %d\n", yynerrs);
         int j;
         for(j = 0; j < error_count; j ++)
         {

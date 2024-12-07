@@ -20,7 +20,7 @@ $(C_LEX): lexical.l
 	$(FLEX) $^
 
 $(C_SYN) $(H_SYN): syntax.y $(C_LEX)
-	${BISON} -d -t $<
+	${BISON} -d -t -v $<
 
 clean:
 	rm *.yy.c

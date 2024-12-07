@@ -8,6 +8,7 @@
     #include "node.h" 
     #include "syntax.tab.h"
    
+    int tmp = 0;
     int yycolumn = 1;
     #define YY_USER_ACTION \
         yylloc.first_line=yylloc.last_line=yylineno; \
@@ -26,7 +27,7 @@
     int comments = 0;
     int buff = 100;
     char **wrong_info;
-    int tmp = 0;
+    
 %}
 
 letter [a-zA-Z]
@@ -46,6 +47,7 @@ FOR [fF][oO][rR]
 WHILE [wW][hH][iI][lL][eE]
 INT [iI][nN][tT]
 MAIN [mM][aA][iI][nN]
+RETURN [rR][eE][tT][uU][rR][nN]
 
 WRITE [wW][rR][iI][tT][eE]
 READ [rR][eE][aA][dD]
@@ -107,6 +109,7 @@ other .
 {READ} { yylval.node = createToken(yylineno, TOKEN_OTHER, "READ", yytext); return READ; }
 {MAIN} { yylval.node = createToken(yylineno, TOKEN_OTHER, "MAIN", yytext); return MAIN; }
 {CALL} { yylval.node = createToken(yylineno, TOKEN_OTHER, "CALL", yytext); return CALL; }
+{RETURN} { yylval.node = createToken(yylineno, TOKEN_OTHER, "RETURN", yytext); return RETURN; }
 
 {ID} { yylval.node = createToken(yylineno, TOKEN_ID, "ID", yytext); return ID; }
 {NUM} { yylval.node = createToken(yylineno, TOKEN_INT, "NUM", yytext); return NUM; }
