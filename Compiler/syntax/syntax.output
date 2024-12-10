@@ -1,14 +1,6 @@
 终端机在文法中未使用
 
-    COMMA
     DOT
-    AND
-    OR
-    NOT
-    LB
-    RB
-    STRUCT
-    RETURN
 
 
 语法
@@ -17,112 +9,148 @@
 
     1 Program: CodeDec
 
-    2 CodeDec: MainDec
-    3        | FunDec CodeDec
+    2 CodeDec: Specifier MainDec
+    3        | Specifier FunDec CodeDec
+    4        | Specifier ExtDecList SEMI CodeDec
+    5        | Specifier SEMI CodeDec
+    6        | error CodeDec
 
-    4 MainDec: MAIN LP RP FunBody
+    7 MainDec: MAIN LP VarList RP FunBody
+    8        | MAIN LP RP FunBody
 
-    5 FunDec: ID LP RP FunBody
+    9 FunDec: ID LP VarList RP FunBody
+   10       | ID LP RP FunBody
 
-    6 VarDec: INT ID SEMI
-    7       | INT ID error
+   11 VarList: Specifier VarDec
+   12        | Specifier VarDec COMMA VarList
 
-    8 FunBody: LC DecList StatList RC
-    9        | error RC
+   13 ExtDecList: VarDec
+   14           | VarDec COMMA ExtDecList
 
-   10 DecList: VarDec DecList
-   11        | ε
+   15 FunBody: LC DefList StatList RC
+   16        | error RC
 
-   12 StatList: Statements StatList
-   13         | ε
+   17 Specifier: INT
+   18          | StructSpecifier
 
-   14 Statements: IfStat
-   15           | WhileStat
-   16           | ForStat
-   17           | ReadStat
-   18           | WriteStat
-   19           | CompoundStat
-   20           | ExprStat
-   21           | CallStat
+   19 StructSpecifier: STRUCT OptTag LC DefList RC
+   20                | STRUCT Tag
 
-   22 IfStat: IF LP Expr RP Statements ElseStat
-   23       | IF LP Expr RP Statements
+   21 OptTag: ID
+   22       | ε
 
-   24 ElseStat: ELSE Statements
+   23 Tag: ID
 
-   25 WhileStat: WHILE LP Expr RP Statements
+   24 DefList: Def DefList
+   25        | ε
 
-   26 ForStat: FOR LP Expr SEMI Expr SEMI Expr RP Statements
+   26 Def: Specifier DecList SEMI
 
-   27 WriteStat: WRITE Expr
+   27 DecList: Dec
+   28        | Dec COMMA DecList
 
-   28 ReadStat: READ ID
+   29 Dec: VarDec
+   30    | VarDec ASSIGNOP Expr
 
-   29 CompoundStat: LC StatList RC
-   30             | error RC
+   31 VarDec: ID
+   32       | VarDec LB NUM RB
+   33       | ID error
+   34       | VarDec LB error RB
 
-   31 ExprStat: Expr SEMI
-   32         | SEMI
-   33         | error SEMI
-   34         | Expr error
+   35 StatList: Statements StatList
+   36         | ε
 
-   35 CallStat: CALL ID LP RP
-   36         | error RP
+   37 Statements: IfStat
+   38           | WhileStat
+   39           | ForStat
+   40           | ReadStat
+   41           | WriteStat
+   42           | CompoundStat
+   43           | ExprStat
+   44           | CallStat
+   45           | RETURN Expr SEMI
 
-   37 Expr: ID ASSIGNOP Bool_Expr
-   38     | Bool_Expr
+   46 IfStat: IF LP Expr RP Statements ElseStat
+   47       | IF LP Expr RP Statements
 
-   39 Bool_Expr: Add_Expr
-   40          | Add_Expr RELOP Add_Expr
+   48 ElseStat: ELSE Statements
 
-   41 Add_Expr: term
-   42         | Add_Expr PLUS term
-   43         | Add_Expr MINUS term
+   49 WhileStat: WHILE LP Expr RP Statements
 
-   44 term: factor
-   45     | term STAR factor
-   46     | term DIV factor
+   50 ForStat: FOR LP Expr SEMI Expr SEMI Expr RP Statements
 
-   47 factor: LP Add_Expr RP
-   48       | ID
-   49       | NUM
+   51 WriteStat: WRITE Expr
+
+   52 ReadStat: READ ID
+
+   53 CompoundStat: LC StatList RC
+   54             | error RC
+
+   55 ExprStat: Expr SEMI
+   56         | SEMI
+   57         | error SEMI
+   58         | Expr error
+
+   59 CallStat: CALL ID LP RP
+   60         | error RP
+
+   61 Expr: ID ASSIGNOP Bool_Expr
+   62     | Bool_Expr
+
+   63 Bool_Expr: Add_Expr
+   64          | Add_Expr RELOP Add_Expr
+   65          | Add_Expr AND Add_Expr
+   66          | Add_Expr OR Add_Expr
+   67          | NOT Add_Expr
+
+   68 Add_Expr: term
+   69         | Add_Expr PLUS term
+   70         | Add_Expr MINUS term
+
+   71 term: factor
+   72     | term STAR factor
+   73     | term DIV factor
+
+   74 factor: LP Add_Expr RP
+   75       | ID
+   76       | NUM
 
 
 终结语词，附有它们出现处的规则
 
     $end (0) 0
-    error (256) 7 9 30 33 34 36
-    INT <node> (258) 6 7
-    ID <node> (259) 5 6 7 28 35 37 48
-    NUM <node> (260) 49
-    COMMA <node> (261)
+    error (256) 6 16 33 34 54 57 58 60
+    INT <node> (258) 17
+    ID <node> (259) 9 10 21 23 31 33 52 59 61 75
+    NUM <node> (260) 32 76
+    COMMA <node> (261) 12 14 28
     DOT <node> (262)
-    SEMI <node> (263) 6 26 31 32 33
-    RELOP <node> (264) 40
-    ASSIGNOP <node> (265) 37
-    PLUS <node> (266) 42
-    MINUS <node> (267) 43
-    STAR <node> (268) 45
-    DIV <node> (269) 46
-    AND <node> (270)
-    OR <node> (271)
-    NOT <node> (272)
-    LP <node> (273) 4 5 22 23 25 26 35 47
-    RP <node> (274) 4 5 22 23 25 26 35 36 47
-    LB <node> (275)
-    RB <node> (276)
-    LC <node> (277) 8 29
-    RC <node> (278) 8 9 29 30
-    IF <node> (279) 22 23
-    ELSE <node> (280) 24
-    WHILE <node> (281) 25
-    FOR <node> (282) 26
-    STRUCT <node> (283)
-    RETURN <node> (284)
-    WRITE <node> (285) 27
-    READ <node> (286) 28
-    CALL <node> (287) 35
-    MAIN <node> (288) 4
+    SEMI <node> (263) 4 5 26 45 50 55 56 57
+    RELOP <node> (264) 64
+    ASSIGNOP <node> (265) 30 61
+    PLUS <node> (266) 69
+    MINUS <node> (267) 70
+    STAR <node> (268) 72
+    DIV <node> (269) 73
+    AND <node> (270) 65
+    OR <node> (271) 66
+    NOT <node> (272) 67
+    LP <node> (273) 7 8 9 10 46 47 49 50 59 74
+    RP <node> (274) 7 8 9 10 46 47 49 50 59 60 74
+    LB <node> (275) 32 34
+    RB <node> (276) 32 34
+    LC <node> (277) 15 19 53
+    RC <node> (278) 15 16 19 53 54
+    IF <node> (279) 46 47
+    ELSE <node> (280) 48
+    WHILE <node> (281) 49
+    FOR <node> (282) 50
+    STRUCT <node> (283) 19 20
+    RETURN <node> (284) 45
+    WRITE <node> (285) 51
+    READ <node> (286) 52
+    CALL <node> (287) 59
+    MAIN <node> (288) 7 8
 
 
 非终结语词，附有它们出现处的规则
@@ -133,1123 +161,1710 @@
         on left: 1
         on right: 0
     CodeDec <node> (36)
-        on left: 2 3
-        on right: 1 3
+        on left: 2 3 4 5 6
+        on right: 1 3 4 5 6
     MainDec <node> (37)
-        on left: 4
+        on left: 7 8
         on right: 2
     FunDec <node> (38)
-        on left: 5
+        on left: 9 10
         on right: 3
-    VarDec <node> (39)
-        on left: 6 7
-        on right: 10
-    FunBody <node> (40)
-        on left: 8 9
-        on right: 4 5
-    DecList <node> (41)
-        on left: 10 11
-        on right: 8 10
-    StatList <node> (42)
-        on left: 12 13
-        on right: 8 12 29
-    Statements <node> (43)
-        on left: 14 15 16 17 18 19 20 21
-        on right: 12 22 23 24 25 26
-    IfStat <node> (44)
-        on left: 22 23
-        on right: 14
-    ElseStat <node> (45)
-        on left: 24
-        on right: 22
-    WhileStat <node> (46)
-        on left: 25
-        on right: 15
-    ForStat <node> (47)
-        on left: 26
-        on right: 16
-    WriteStat <node> (48)
-        on left: 27
+    VarList <node> (39)
+        on left: 11 12
+        on right: 7 9 12
+    ExtDecList <node> (40)
+        on left: 13 14
+        on right: 4 14
+    FunBody <node> (41)
+        on left: 15 16
+        on right: 7 8 9 10
+    Specifier <node> (42)
+        on left: 17 18
+        on right: 2 3 4 5 11 12 26
+    StructSpecifier <node> (43)
+        on left: 19 20
         on right: 18
-    ReadStat <node> (49)
-        on left: 28
-        on right: 17
-    CompoundStat <node> (50)
-        on left: 29 30
+    OptTag <node> (44)
+        on left: 21 22
         on right: 19
-    ExprStat <node> (51)
-        on left: 31 32 33 34
+    Tag <node> (45)
+        on left: 23
         on right: 20
-    CallStat <node> (52)
+    DefList <node> (46)
+        on left: 24 25
+        on right: 15 19 24
+    Def <node> (47)
+        on left: 26
+        on right: 24
+    DecList <node> (48)
+        on left: 27 28
+        on right: 26 28
+    Dec <node> (49)
+        on left: 29 30
+        on right: 27 28
+    VarDec <node> (50)
+        on left: 31 32 33 34
+        on right: 11 12 13 14 29 30 32 34
+    StatList <node> (51)
         on left: 35 36
-        on right: 21
-    Expr <node> (53)
-        on left: 37 38
-        on right: 22 23 25 26 27 31 34
-    Bool_Expr <node> (54)
-        on left: 39 40
-        on right: 37 38
-    Add_Expr <node> (55)
-        on left: 41 42 43
-        on right: 39 40 42 43 47
-    term <node> (56)
-        on left: 44 45 46
-        on right: 41 42 43 45 46
-    factor <node> (57)
-        on left: 47 48 49
-        on right: 44 45 46
+        on right: 15 35 53
+    Statements <node> (52)
+        on left: 37 38 39 40 41 42 43 44 45
+        on right: 35 46 47 48 49 50
+    IfStat <node> (53)
+        on left: 46 47
+        on right: 37
+    ElseStat <node> (54)
+        on left: 48
+        on right: 46
+    WhileStat <node> (55)
+        on left: 49
+        on right: 38
+    ForStat <node> (56)
+        on left: 50
+        on right: 39
+    WriteStat <node> (57)
+        on left: 51
+        on right: 41
+    ReadStat <node> (58)
+        on left: 52
+        on right: 40
+    CompoundStat <node> (59)
+        on left: 53 54
+        on right: 42
+    ExprStat <node> (60)
+        on left: 55 56 57 58
+        on right: 43
+    CallStat <node> (61)
+        on left: 59 60
+        on right: 44
+    Expr <node> (62)
+        on left: 61 62
+        on right: 30 45 46 47 49 50 51 55 58
+    Bool_Expr <node> (63)
+        on left: 63 64 65 66 67
+        on right: 61 62
+    Add_Expr <node> (64)
+        on left: 68 69 70
+        on right: 63 64 65 66 67 69 70 74
+    term <node> (65)
+        on left: 71 72 73
+        on right: 68 69 70 72 73
+    factor <node> (66)
+        on left: 74 75 76
+        on right: 71 72 73
 
 
 状态 0
 
     0 $accept: • Program $end
 
-    ID    偏移，并进入状态 1
-    MAIN  偏移，并进入状态 2
+    error   偏移，并进入状态 1
+    INT     偏移，并进入状态 2
+    STRUCT  偏移，并进入状态 3
 
-    Program  转到状态 3
-    CodeDec  转到状态 4
-    MainDec  转到状态 5
-    FunDec   转到状态 6
+    Program          转到状态 4
+    CodeDec          转到状态 5
+    Specifier        转到状态 6
+    StructSpecifier  转到状态 7
 
 
 状态 1
 
-    5 FunDec: ID • LP RP FunBody
+    6 CodeDec: error • CodeDec
 
-    LP  偏移，并进入状态 7
+    error   偏移，并进入状态 1
+    INT     偏移，并进入状态 2
+    STRUCT  偏移，并进入状态 3
+
+    CodeDec          转到状态 8
+    Specifier        转到状态 6
+    StructSpecifier  转到状态 7
 
 
 状态 2
 
-    4 MainDec: MAIN • LP RP FunBody
+   17 Specifier: INT •
 
-    LP  偏移，并进入状态 8
+    $default  使用规则 17 以归约 (Specifier)
 
 
 状态 3
 
-    0 $accept: Program • $end
+   19 StructSpecifier: STRUCT • OptTag LC DefList RC
+   20                | STRUCT • Tag
 
-    $end  偏移，并进入状态 9
+    ID  偏移，并进入状态 9
+
+    $default  使用规则 22 以归约 (OptTag)
+
+    OptTag  转到状态 10
+    Tag     转到状态 11
 
 
 状态 4
+
+    0 $accept: Program • $end
+
+    $end  偏移，并进入状态 12
+
+
+状态 5
 
     1 Program: CodeDec •
 
     $default  使用规则 1 以归约 (Program)
 
 
-状态 5
-
-    2 CodeDec: MainDec •
-
-    $default  使用规则 2 以归约 (CodeDec)
-
-
 状态 6
 
-    3 CodeDec: FunDec • CodeDec
+    2 CodeDec: Specifier • MainDec
+    3        | Specifier • FunDec CodeDec
+    4        | Specifier • ExtDecList SEMI CodeDec
+    5        | Specifier • SEMI CodeDec
 
-    ID    偏移，并进入状态 1
-    MAIN  偏移，并进入状态 2
+    ID    偏移，并进入状态 13
+    SEMI  偏移，并进入状态 14
+    MAIN  偏移，并进入状态 15
 
-    CodeDec  转到状态 10
-    MainDec  转到状态 5
-    FunDec   转到状态 6
+    MainDec     转到状态 16
+    FunDec      转到状态 17
+    ExtDecList  转到状态 18
+    VarDec      转到状态 19
 
 
 状态 7
 
-    5 FunDec: ID LP • RP FunBody
+   18 Specifier: StructSpecifier •
 
-    RP  偏移，并进入状态 11
+    $default  使用规则 18 以归约 (Specifier)
 
 
 状态 8
 
-    4 MainDec: MAIN LP • RP FunBody
+    6 CodeDec: error CodeDec •
 
-    RP  偏移，并进入状态 12
+    $default  使用规则 6 以归约 (CodeDec)
 
 
 状态 9
+
+   21 OptTag: ID •
+   23 Tag: ID •
+
+    LC        使用规则 21 以归约 (OptTag)
+    $default  使用规则 23 以归约 (Tag)
+
+
+状态 10
+
+   19 StructSpecifier: STRUCT OptTag • LC DefList RC
+
+    LC  偏移，并进入状态 20
+
+
+状态 11
+
+   20 StructSpecifier: STRUCT Tag •
+
+    $default  使用规则 20 以归约 (StructSpecifier)
+
+
+状态 12
 
     0 $accept: Program $end •
 
     $default  接受
 
 
-状态 10
-
-    3 CodeDec: FunDec CodeDec •
-
-    $default  使用规则 3 以归约 (CodeDec)
-
-
-状态 11
-
-    5 FunDec: ID LP RP • FunBody
-
-    error  偏移，并进入状态 13
-    LC     偏移，并进入状态 14
-
-    FunBody  转到状态 15
-
-
-状态 12
-
-    4 MainDec: MAIN LP RP • FunBody
-
-    error  偏移，并进入状态 13
-    LC     偏移，并进入状态 14
-
-    FunBody  转到状态 16
-
-
 状态 13
 
-    9 FunBody: error • RC
+    9 FunDec: ID • LP VarList RP FunBody
+   10       | ID • LP RP FunBody
+   31 VarDec: ID •
+   33       | ID • error
 
-    RC  偏移，并进入状态 17
+    error  偏移，并进入状态 21
+    LP     偏移，并进入状态 22
+
+    COMMA  使用规则 31 以归约 (VarDec)
+    SEMI   使用规则 31 以归约 (VarDec)
+    LB     使用规则 31 以归约 (VarDec)
 
 
 状态 14
 
-    8 FunBody: LC • DecList StatList RC
+    5 CodeDec: Specifier SEMI • CodeDec
 
-    INT  偏移，并进入状态 18
+    error   偏移，并进入状态 1
+    INT     偏移，并进入状态 2
+    STRUCT  偏移，并进入状态 3
 
-    $default  使用规则 11 以归约 (DecList)
-
-    VarDec   转到状态 19
-    DecList  转到状态 20
+    CodeDec          转到状态 23
+    Specifier        转到状态 6
+    StructSpecifier  转到状态 7
 
 
 状态 15
 
-    5 FunDec: ID LP RP FunBody •
+    7 MainDec: MAIN • LP VarList RP FunBody
+    8        | MAIN • LP RP FunBody
 
-    $default  使用规则 5 以归约 (FunDec)
+    LP  偏移，并进入状态 24
 
 
 状态 16
 
-    4 MainDec: MAIN LP RP FunBody •
+    2 CodeDec: Specifier MainDec •
 
-    $default  使用规则 4 以归约 (MainDec)
+    $default  使用规则 2 以归约 (CodeDec)
 
 
 状态 17
 
-    9 FunBody: error RC •
+    3 CodeDec: Specifier FunDec • CodeDec
 
-    $default  使用规则 9 以归约 (FunBody)
+    error   偏移，并进入状态 1
+    INT     偏移，并进入状态 2
+    STRUCT  偏移，并进入状态 3
+
+    CodeDec          转到状态 25
+    Specifier        转到状态 6
+    StructSpecifier  转到状态 7
 
 
 状态 18
 
-    6 VarDec: INT • ID SEMI
-    7       | INT • ID error
+    4 CodeDec: Specifier ExtDecList • SEMI CodeDec
 
-    ID  偏移，并进入状态 21
+    SEMI  偏移，并进入状态 26
 
 
 状态 19
 
-   10 DecList: VarDec • DecList
+   13 ExtDecList: VarDec •
+   14           | VarDec • COMMA ExtDecList
+   32 VarDec: VarDec • LB NUM RB
+   34       | VarDec • LB error RB
 
-    INT  偏移，并进入状态 18
+    COMMA  偏移，并进入状态 27
+    LB     偏移，并进入状态 28
 
-    $default  使用规则 11 以归约 (DecList)
-
-    VarDec   转到状态 19
-    DecList  转到状态 22
+    $default  使用规则 13 以归约 (ExtDecList)
 
 
 状态 20
 
-    8 FunBody: LC DecList • StatList RC
+   19 StructSpecifier: STRUCT OptTag LC • DefList RC
 
-    error  偏移，并进入状态 23
-    ID     偏移，并进入状态 24
-    NUM    偏移，并进入状态 25
-    SEMI   偏移，并进入状态 26
-    LP     偏移，并进入状态 27
-    LC     偏移，并进入状态 28
-    IF     偏移，并进入状态 29
-    WHILE  偏移，并进入状态 30
-    FOR    偏移，并进入状态 31
-    WRITE  偏移，并进入状态 32
-    READ   偏移，并进入状态 33
-    CALL   偏移，并进入状态 34
+    INT     偏移，并进入状态 2
+    STRUCT  偏移，并进入状态 3
 
-    RC  使用规则 13 以归约 (StatList)
+    $default  使用规则 25 以归约 (DefList)
 
-    StatList      转到状态 35
-    Statements    转到状态 36
-    IfStat        转到状态 37
-    WhileStat     转到状态 38
-    ForStat       转到状态 39
-    WriteStat     转到状态 40
-    ReadStat      转到状态 41
-    CompoundStat  转到状态 42
-    ExprStat      转到状态 43
-    CallStat      转到状态 44
-    Expr          转到状态 45
-    Bool_Expr     转到状态 46
-    Add_Expr      转到状态 47
-    term          转到状态 48
-    factor        转到状态 49
+    Specifier        转到状态 29
+    StructSpecifier  转到状态 7
+    DefList          转到状态 30
+    Def              转到状态 31
 
 
 状态 21
 
-    6 VarDec: INT ID • SEMI
-    7       | INT ID • error
+   33 VarDec: ID error •
 
-    error  偏移，并进入状态 50
-    SEMI   偏移，并进入状态 51
+    $default  使用规则 33 以归约 (VarDec)
 
 
 状态 22
 
-   10 DecList: VarDec DecList •
+    9 FunDec: ID LP • VarList RP FunBody
+   10       | ID LP • RP FunBody
 
-    $default  使用规则 10 以归约 (DecList)
+    INT     偏移，并进入状态 2
+    RP      偏移，并进入状态 32
+    STRUCT  偏移，并进入状态 3
+
+    VarList          转到状态 33
+    Specifier        转到状态 34
+    StructSpecifier  转到状态 7
 
 
 状态 23
 
-   30 CompoundStat: error • RC
-   33 ExprStat: error • SEMI
-   36 CallStat: error • RP
+    5 CodeDec: Specifier SEMI CodeDec •
 
-    SEMI  偏移，并进入状态 52
-    RP    偏移，并进入状态 53
-    RC    偏移，并进入状态 54
+    $default  使用规则 5 以归约 (CodeDec)
 
 
 状态 24
 
-   37 Expr: ID • ASSIGNOP Bool_Expr
-   48 factor: ID •
+    7 MainDec: MAIN LP • VarList RP FunBody
+    8        | MAIN LP • RP FunBody
 
-    ASSIGNOP  偏移，并进入状态 55
+    INT     偏移，并进入状态 2
+    RP      偏移，并进入状态 35
+    STRUCT  偏移，并进入状态 3
 
-    $default  使用规则 48 以归约 (factor)
+    VarList          转到状态 36
+    Specifier        转到状态 34
+    StructSpecifier  转到状态 7
 
 
 状态 25
 
-   49 factor: NUM •
+    3 CodeDec: Specifier FunDec CodeDec •
 
-    $default  使用规则 49 以归约 (factor)
+    $default  使用规则 3 以归约 (CodeDec)
 
 
 状态 26
 
-   32 ExprStat: SEMI •
+    4 CodeDec: Specifier ExtDecList SEMI • CodeDec
 
-    $default  使用规则 32 以归约 (ExprStat)
+    error   偏移，并进入状态 1
+    INT     偏移，并进入状态 2
+    STRUCT  偏移，并进入状态 3
+
+    CodeDec          转到状态 37
+    Specifier        转到状态 6
+    StructSpecifier  转到状态 7
 
 
 状态 27
 
-   47 factor: LP • Add_Expr RP
+   14 ExtDecList: VarDec COMMA • ExtDecList
 
-    ID   偏移，并进入状态 56
-    NUM  偏移，并进入状态 25
-    LP   偏移，并进入状态 27
+    ID  偏移，并进入状态 38
 
-    Add_Expr  转到状态 57
-    term      转到状态 48
-    factor    转到状态 49
+    ExtDecList  转到状态 39
+    VarDec      转到状态 19
 
 
 状态 28
 
-   29 CompoundStat: LC • StatList RC
+   32 VarDec: VarDec LB • NUM RB
+   34       | VarDec LB • error RB
 
-    error  偏移，并进入状态 23
-    ID     偏移，并进入状态 24
-    NUM    偏移，并进入状态 25
-    SEMI   偏移，并进入状态 26
-    LP     偏移，并进入状态 27
-    LC     偏移，并进入状态 28
-    IF     偏移，并进入状态 29
-    WHILE  偏移，并进入状态 30
-    FOR    偏移，并进入状态 31
-    WRITE  偏移，并进入状态 32
-    READ   偏移，并进入状态 33
-    CALL   偏移，并进入状态 34
-
-    RC  使用规则 13 以归约 (StatList)
-
-    StatList      转到状态 58
-    Statements    转到状态 36
-    IfStat        转到状态 37
-    WhileStat     转到状态 38
-    ForStat       转到状态 39
-    WriteStat     转到状态 40
-    ReadStat      转到状态 41
-    CompoundStat  转到状态 42
-    ExprStat      转到状态 43
-    CallStat      转到状态 44
-    Expr          转到状态 45
-    Bool_Expr     转到状态 46
-    Add_Expr      转到状态 47
-    term          转到状态 48
-    factor        转到状态 49
+    error  偏移，并进入状态 40
+    NUM    偏移，并进入状态 41
 
 
 状态 29
 
-   22 IfStat: IF • LP Expr RP Statements ElseStat
-   23       | IF • LP Expr RP Statements
+   26 Def: Specifier • DecList SEMI
 
-    LP  偏移，并进入状态 59
+    ID  偏移，并进入状态 38
+
+    DecList  转到状态 42
+    Dec      转到状态 43
+    VarDec   转到状态 44
 
 
 状态 30
 
-   25 WhileStat: WHILE • LP Expr RP Statements
+   19 StructSpecifier: STRUCT OptTag LC DefList • RC
 
-    LP  偏移，并进入状态 60
+    RC  偏移，并进入状态 45
 
 
 状态 31
 
-   26 ForStat: FOR • LP Expr SEMI Expr SEMI Expr RP Statements
+   24 DefList: Def • DefList
 
-    LP  偏移，并进入状态 61
+    INT     偏移，并进入状态 2
+    STRUCT  偏移，并进入状态 3
+
+    $default  使用规则 25 以归约 (DefList)
+
+    Specifier        转到状态 29
+    StructSpecifier  转到状态 7
+    DefList          转到状态 46
+    Def              转到状态 31
 
 
 状态 32
 
-   27 WriteStat: WRITE • Expr
+   10 FunDec: ID LP RP • FunBody
 
-    ID   偏移，并进入状态 24
-    NUM  偏移，并进入状态 25
-    LP   偏移，并进入状态 27
+    error  偏移，并进入状态 47
+    LC     偏移，并进入状态 48
 
-    Expr       转到状态 62
-    Bool_Expr  转到状态 46
-    Add_Expr   转到状态 47
-    term       转到状态 48
-    factor     转到状态 49
+    FunBody  转到状态 49
 
 
 状态 33
 
-   28 ReadStat: READ • ID
+    9 FunDec: ID LP VarList • RP FunBody
 
-    ID  偏移，并进入状态 63
+    RP  偏移，并进入状态 50
 
 
 状态 34
 
-   35 CallStat: CALL • ID LP RP
+   11 VarList: Specifier • VarDec
+   12        | Specifier • VarDec COMMA VarList
 
-    ID  偏移，并进入状态 64
+    ID  偏移，并进入状态 38
+
+    VarDec  转到状态 51
 
 
 状态 35
 
-    8 FunBody: LC DecList StatList • RC
+    8 MainDec: MAIN LP RP • FunBody
 
-    RC  偏移，并进入状态 65
+    error  偏移，并进入状态 47
+    LC     偏移，并进入状态 48
+
+    FunBody  转到状态 52
 
 
 状态 36
 
-   12 StatList: Statements • StatList
+    7 MainDec: MAIN LP VarList • RP FunBody
 
-    error  偏移，并进入状态 23
-    ID     偏移，并进入状态 24
-    NUM    偏移，并进入状态 25
-    SEMI   偏移，并进入状态 26
-    LP     偏移，并进入状态 27
-    LC     偏移，并进入状态 28
-    IF     偏移，并进入状态 29
-    WHILE  偏移，并进入状态 30
-    FOR    偏移，并进入状态 31
-    WRITE  偏移，并进入状态 32
-    READ   偏移，并进入状态 33
-    CALL   偏移，并进入状态 34
-
-    RC  使用规则 13 以归约 (StatList)
-
-    StatList      转到状态 66
-    Statements    转到状态 36
-    IfStat        转到状态 37
-    WhileStat     转到状态 38
-    ForStat       转到状态 39
-    WriteStat     转到状态 40
-    ReadStat      转到状态 41
-    CompoundStat  转到状态 42
-    ExprStat      转到状态 43
-    CallStat      转到状态 44
-    Expr          转到状态 45
-    Bool_Expr     转到状态 46
-    Add_Expr      转到状态 47
-    term          转到状态 48
-    factor        转到状态 49
+    RP  偏移，并进入状态 53
 
 
 状态 37
 
-   14 Statements: IfStat •
+    4 CodeDec: Specifier ExtDecList SEMI CodeDec •
 
-    $default  使用规则 14 以归约 (Statements)
+    $default  使用规则 4 以归约 (CodeDec)
 
 
 状态 38
 
-   15 Statements: WhileStat •
+   31 VarDec: ID •
+   33       | ID • error
 
-    $default  使用规则 15 以归约 (Statements)
+    error  偏移，并进入状态 21
+
+    COMMA     使用规则 31 以归约 (VarDec)
+    SEMI      使用规则 31 以归约 (VarDec)
+    ASSIGNOP  使用规则 31 以归约 (VarDec)
+    RP        使用规则 31 以归约 (VarDec)
+    LB        使用规则 31 以归约 (VarDec)
 
 
 状态 39
 
-   16 Statements: ForStat •
+   14 ExtDecList: VarDec COMMA ExtDecList •
 
-    $default  使用规则 16 以归约 (Statements)
+    $default  使用规则 14 以归约 (ExtDecList)
 
 
 状态 40
 
-   18 Statements: WriteStat •
+   34 VarDec: VarDec LB error • RB
 
-    $default  使用规则 18 以归约 (Statements)
+    RB  偏移，并进入状态 54
 
 
 状态 41
 
-   17 Statements: ReadStat •
+   32 VarDec: VarDec LB NUM • RB
 
-    $default  使用规则 17 以归约 (Statements)
+    RB  偏移，并进入状态 55
 
 
 状态 42
 
-   19 Statements: CompoundStat •
+   26 Def: Specifier DecList • SEMI
 
-    $default  使用规则 19 以归约 (Statements)
+    SEMI  偏移，并进入状态 56
 
 
 状态 43
 
-   20 Statements: ExprStat •
+   27 DecList: Dec •
+   28        | Dec • COMMA DecList
 
-    $default  使用规则 20 以归约 (Statements)
+    COMMA  偏移，并进入状态 57
+
+    $default  使用规则 27 以归约 (DecList)
 
 
 状态 44
 
-   21 Statements: CallStat •
+   29 Dec: VarDec •
+   30    | VarDec • ASSIGNOP Expr
+   32 VarDec: VarDec • LB NUM RB
+   34       | VarDec • LB error RB
 
-    $default  使用规则 21 以归约 (Statements)
+    ASSIGNOP  偏移，并进入状态 58
+    LB        偏移，并进入状态 28
+
+    $default  使用规则 29 以归约 (Dec)
 
 
 状态 45
 
-   31 ExprStat: Expr • SEMI
-   34         | Expr • error
+   19 StructSpecifier: STRUCT OptTag LC DefList RC •
 
-    error  偏移，并进入状态 67
-    SEMI   偏移，并进入状态 68
+    $default  使用规则 19 以归约 (StructSpecifier)
 
 
 状态 46
 
-   38 Expr: Bool_Expr •
+   24 DefList: Def DefList •
 
-    $default  使用规则 38 以归约 (Expr)
+    $default  使用规则 24 以归约 (DefList)
 
 
 状态 47
 
-   39 Bool_Expr: Add_Expr •
-   40          | Add_Expr • RELOP Add_Expr
-   42 Add_Expr: Add_Expr • PLUS term
-   43         | Add_Expr • MINUS term
+   16 FunBody: error • RC
 
-    RELOP  偏移，并进入状态 69
-    PLUS   偏移，并进入状态 70
-    MINUS  偏移，并进入状态 71
-
-    $default  使用规则 39 以归约 (Bool_Expr)
+    RC  偏移，并进入状态 59
 
 
 状态 48
 
-   41 Add_Expr: term •
-   45 term: term • STAR factor
-   46     | term • DIV factor
+   15 FunBody: LC • DefList StatList RC
 
-    STAR  偏移，并进入状态 72
-    DIV   偏移，并进入状态 73
+    INT     偏移，并进入状态 2
+    STRUCT  偏移，并进入状态 3
 
-    $default  使用规则 41 以归约 (Add_Expr)
+    $default  使用规则 25 以归约 (DefList)
+
+    Specifier        转到状态 29
+    StructSpecifier  转到状态 7
+    DefList          转到状态 60
+    Def              转到状态 31
 
 
 状态 49
 
-   44 term: factor •
+   10 FunDec: ID LP RP FunBody •
 
-    $default  使用规则 44 以归约 (term)
+    $default  使用规则 10 以归约 (FunDec)
 
 
 状态 50
 
-    7 VarDec: INT ID error •
+    9 FunDec: ID LP VarList RP • FunBody
 
-    $default  使用规则 7 以归约 (VarDec)
+    error  偏移，并进入状态 47
+    LC     偏移，并进入状态 48
+
+    FunBody  转到状态 61
 
 
 状态 51
 
-    6 VarDec: INT ID SEMI •
+   11 VarList: Specifier VarDec •
+   12        | Specifier VarDec • COMMA VarList
+   32 VarDec: VarDec • LB NUM RB
+   34       | VarDec • LB error RB
 
-    $default  使用规则 6 以归约 (VarDec)
+    COMMA  偏移，并进入状态 62
+    LB     偏移，并进入状态 28
+
+    $default  使用规则 11 以归约 (VarList)
 
 
 状态 52
 
-   33 ExprStat: error SEMI •
+    8 MainDec: MAIN LP RP FunBody •
 
-    $default  使用规则 33 以归约 (ExprStat)
+    $default  使用规则 8 以归约 (MainDec)
 
 
 状态 53
 
-   36 CallStat: error RP •
+    7 MainDec: MAIN LP VarList RP • FunBody
 
-    $default  使用规则 36 以归约 (CallStat)
+    error  偏移，并进入状态 47
+    LC     偏移，并进入状态 48
+
+    FunBody  转到状态 63
 
 
 状态 54
 
-   30 CompoundStat: error RC •
+   34 VarDec: VarDec LB error RB •
 
-    $default  使用规则 30 以归约 (CompoundStat)
+    $default  使用规则 34 以归约 (VarDec)
 
 
 状态 55
 
-   37 Expr: ID ASSIGNOP • Bool_Expr
+   32 VarDec: VarDec LB NUM RB •
 
-    ID   偏移，并进入状态 56
-    NUM  偏移，并进入状态 25
-    LP   偏移，并进入状态 27
-
-    Bool_Expr  转到状态 74
-    Add_Expr   转到状态 47
-    term       转到状态 48
-    factor     转到状态 49
+    $default  使用规则 32 以归约 (VarDec)
 
 
 状态 56
 
-   48 factor: ID •
+   26 Def: Specifier DecList SEMI •
 
-    $default  使用规则 48 以归约 (factor)
+    $default  使用规则 26 以归约 (Def)
 
 
 状态 57
 
-   42 Add_Expr: Add_Expr • PLUS term
-   43         | Add_Expr • MINUS term
-   47 factor: LP Add_Expr • RP
+   28 DecList: Dec COMMA • DecList
 
-    PLUS   偏移，并进入状态 70
-    MINUS  偏移，并进入状态 71
-    RP     偏移，并进入状态 75
+    ID  偏移，并进入状态 38
+
+    DecList  转到状态 64
+    Dec      转到状态 43
+    VarDec   转到状态 44
 
 
 状态 58
 
-   29 CompoundStat: LC StatList • RC
+   30 Dec: VarDec ASSIGNOP • Expr
 
-    RC  偏移，并进入状态 76
+    ID   偏移，并进入状态 65
+    NUM  偏移，并进入状态 66
+    NOT  偏移，并进入状态 67
+    LP   偏移，并进入状态 68
+
+    Expr       转到状态 69
+    Bool_Expr  转到状态 70
+    Add_Expr   转到状态 71
+    term       转到状态 72
+    factor     转到状态 73
 
 
 状态 59
 
-   22 IfStat: IF LP • Expr RP Statements ElseStat
-   23       | IF LP • Expr RP Statements
+   16 FunBody: error RC •
 
-    ID   偏移，并进入状态 24
-    NUM  偏移，并进入状态 25
-    LP   偏移，并进入状态 27
-
-    Expr       转到状态 77
-    Bool_Expr  转到状态 46
-    Add_Expr   转到状态 47
-    term       转到状态 48
-    factor     转到状态 49
+    $default  使用规则 16 以归约 (FunBody)
 
 
 状态 60
 
-   25 WhileStat: WHILE LP • Expr RP Statements
+   15 FunBody: LC DefList • StatList RC
 
-    ID   偏移，并进入状态 24
-    NUM  偏移，并进入状态 25
-    LP   偏移，并进入状态 27
+    error   偏移，并进入状态 74
+    ID      偏移，并进入状态 65
+    NUM     偏移，并进入状态 66
+    SEMI    偏移，并进入状态 75
+    NOT     偏移，并进入状态 67
+    LP      偏移，并进入状态 68
+    LC      偏移，并进入状态 76
+    IF      偏移，并进入状态 77
+    WHILE   偏移，并进入状态 78
+    FOR     偏移，并进入状态 79
+    RETURN  偏移，并进入状态 80
+    WRITE   偏移，并进入状态 81
+    READ    偏移，并进入状态 82
+    CALL    偏移，并进入状态 83
 
-    Expr       转到状态 78
-    Bool_Expr  转到状态 46
-    Add_Expr   转到状态 47
-    term       转到状态 48
-    factor     转到状态 49
+    RC  使用规则 36 以归约 (StatList)
+
+    StatList      转到状态 84
+    Statements    转到状态 85
+    IfStat        转到状态 86
+    WhileStat     转到状态 87
+    ForStat       转到状态 88
+    WriteStat     转到状态 89
+    ReadStat      转到状态 90
+    CompoundStat  转到状态 91
+    ExprStat      转到状态 92
+    CallStat      转到状态 93
+    Expr          转到状态 94
+    Bool_Expr     转到状态 70
+    Add_Expr      转到状态 71
+    term          转到状态 72
+    factor        转到状态 73
 
 
 状态 61
 
-   26 ForStat: FOR LP • Expr SEMI Expr SEMI Expr RP Statements
+    9 FunDec: ID LP VarList RP FunBody •
 
-    ID   偏移，并进入状态 24
-    NUM  偏移，并进入状态 25
-    LP   偏移，并进入状态 27
-
-    Expr       转到状态 79
-    Bool_Expr  转到状态 46
-    Add_Expr   转到状态 47
-    term       转到状态 48
-    factor     转到状态 49
+    $default  使用规则 9 以归约 (FunDec)
 
 
 状态 62
 
-   27 WriteStat: WRITE Expr •
+   12 VarList: Specifier VarDec COMMA • VarList
 
-    $default  使用规则 27 以归约 (WriteStat)
+    INT     偏移，并进入状态 2
+    STRUCT  偏移，并进入状态 3
+
+    VarList          转到状态 95
+    Specifier        转到状态 34
+    StructSpecifier  转到状态 7
 
 
 状态 63
 
-   28 ReadStat: READ ID •
+    7 MainDec: MAIN LP VarList RP FunBody •
 
-    $default  使用规则 28 以归约 (ReadStat)
+    $default  使用规则 7 以归约 (MainDec)
 
 
 状态 64
 
-   35 CallStat: CALL ID • LP RP
+   28 DecList: Dec COMMA DecList •
 
-    LP  偏移，并进入状态 80
+    $default  使用规则 28 以归约 (DecList)
 
 
 状态 65
 
-    8 FunBody: LC DecList StatList RC •
+   61 Expr: ID • ASSIGNOP Bool_Expr
+   75 factor: ID •
 
-    $default  使用规则 8 以归约 (FunBody)
+    ASSIGNOP  偏移，并进入状态 96
+
+    $default  使用规则 75 以归约 (factor)
 
 
 状态 66
 
-   12 StatList: Statements StatList •
+   76 factor: NUM •
 
-    $default  使用规则 12 以归约 (StatList)
+    $default  使用规则 76 以归约 (factor)
 
 
 状态 67
 
-   34 ExprStat: Expr error •
+   67 Bool_Expr: NOT • Add_Expr
 
-    $default  使用规则 34 以归约 (ExprStat)
+    ID   偏移，并进入状态 97
+    NUM  偏移，并进入状态 66
+    LP   偏移，并进入状态 68
+
+    Add_Expr  转到状态 98
+    term      转到状态 72
+    factor    转到状态 73
 
 
 状态 68
 
-   31 ExprStat: Expr SEMI •
+   74 factor: LP • Add_Expr RP
 
-    $default  使用规则 31 以归约 (ExprStat)
+    ID   偏移，并进入状态 97
+    NUM  偏移，并进入状态 66
+    LP   偏移，并进入状态 68
+
+    Add_Expr  转到状态 99
+    term      转到状态 72
+    factor    转到状态 73
 
 
 状态 69
 
-   40 Bool_Expr: Add_Expr RELOP • Add_Expr
+   30 Dec: VarDec ASSIGNOP Expr •
 
-    ID   偏移，并进入状态 56
-    NUM  偏移，并进入状态 25
-    LP   偏移，并进入状态 27
-
-    Add_Expr  转到状态 81
-    term      转到状态 48
-    factor    转到状态 49
+    $default  使用规则 30 以归约 (Dec)
 
 
 状态 70
 
-   42 Add_Expr: Add_Expr PLUS • term
+   62 Expr: Bool_Expr •
 
-    ID   偏移，并进入状态 56
-    NUM  偏移，并进入状态 25
-    LP   偏移，并进入状态 27
-
-    term    转到状态 82
-    factor  转到状态 49
+    $default  使用规则 62 以归约 (Expr)
 
 
 状态 71
 
-   43 Add_Expr: Add_Expr MINUS • term
+   63 Bool_Expr: Add_Expr •
+   64          | Add_Expr • RELOP Add_Expr
+   65          | Add_Expr • AND Add_Expr
+   66          | Add_Expr • OR Add_Expr
+   69 Add_Expr: Add_Expr • PLUS term
+   70         | Add_Expr • MINUS term
 
-    ID   偏移，并进入状态 56
-    NUM  偏移，并进入状态 25
-    LP   偏移，并进入状态 27
+    RELOP  偏移，并进入状态 100
+    PLUS   偏移，并进入状态 101
+    MINUS  偏移，并进入状态 102
+    AND    偏移，并进入状态 103
+    OR     偏移，并进入状态 104
 
-    term    转到状态 83
-    factor  转到状态 49
+    $default  使用规则 63 以归约 (Bool_Expr)
 
 
 状态 72
 
-   45 term: term STAR • factor
+   68 Add_Expr: term •
+   72 term: term • STAR factor
+   73     | term • DIV factor
 
-    ID   偏移，并进入状态 56
-    NUM  偏移，并进入状态 25
-    LP   偏移，并进入状态 27
+    STAR  偏移，并进入状态 105
+    DIV   偏移，并进入状态 106
 
-    factor  转到状态 84
+    $default  使用规则 68 以归约 (Add_Expr)
 
 
 状态 73
 
-   46 term: term DIV • factor
+   71 term: factor •
 
-    ID   偏移，并进入状态 56
-    NUM  偏移，并进入状态 25
-    LP   偏移，并进入状态 27
-
-    factor  转到状态 85
+    $default  使用规则 71 以归约 (term)
 
 
 状态 74
 
-   37 Expr: ID ASSIGNOP Bool_Expr •
+   54 CompoundStat: error • RC
+   57 ExprStat: error • SEMI
+   60 CallStat: error • RP
 
-    $default  使用规则 37 以归约 (Expr)
+    SEMI  偏移，并进入状态 107
+    RP    偏移，并进入状态 108
+    RC    偏移，并进入状态 109
 
 
 状态 75
 
-   47 factor: LP Add_Expr RP •
+   56 ExprStat: SEMI •
 
-    $default  使用规则 47 以归约 (factor)
+    $default  使用规则 56 以归约 (ExprStat)
 
 
 状态 76
 
-   29 CompoundStat: LC StatList RC •
+   53 CompoundStat: LC • StatList RC
 
-    $default  使用规则 29 以归约 (CompoundStat)
+    error   偏移，并进入状态 74
+    ID      偏移，并进入状态 65
+    NUM     偏移，并进入状态 66
+    SEMI    偏移，并进入状态 75
+    NOT     偏移，并进入状态 67
+    LP      偏移，并进入状态 68
+    LC      偏移，并进入状态 76
+    IF      偏移，并进入状态 77
+    WHILE   偏移，并进入状态 78
+    FOR     偏移，并进入状态 79
+    RETURN  偏移，并进入状态 80
+    WRITE   偏移，并进入状态 81
+    READ    偏移，并进入状态 82
+    CALL    偏移，并进入状态 83
+
+    RC  使用规则 36 以归约 (StatList)
+
+    StatList      转到状态 110
+    Statements    转到状态 85
+    IfStat        转到状态 86
+    WhileStat     转到状态 87
+    ForStat       转到状态 88
+    WriteStat     转到状态 89
+    ReadStat      转到状态 90
+    CompoundStat  转到状态 91
+    ExprStat      转到状态 92
+    CallStat      转到状态 93
+    Expr          转到状态 94
+    Bool_Expr     转到状态 70
+    Add_Expr      转到状态 71
+    term          转到状态 72
+    factor        转到状态 73
 
 
 状态 77
 
-   22 IfStat: IF LP Expr • RP Statements ElseStat
-   23       | IF LP Expr • RP Statements
+   46 IfStat: IF • LP Expr RP Statements ElseStat
+   47       | IF • LP Expr RP Statements
 
-    RP  偏移，并进入状态 86
+    LP  偏移，并进入状态 111
 
 
 状态 78
 
-   25 WhileStat: WHILE LP Expr • RP Statements
+   49 WhileStat: WHILE • LP Expr RP Statements
 
-    RP  偏移，并进入状态 87
+    LP  偏移，并进入状态 112
 
 
 状态 79
 
-   26 ForStat: FOR LP Expr • SEMI Expr SEMI Expr RP Statements
+   50 ForStat: FOR • LP Expr SEMI Expr SEMI Expr RP Statements
 
-    SEMI  偏移，并进入状态 88
+    LP  偏移，并进入状态 113
 
 
 状态 80
 
-   35 CallStat: CALL ID LP • RP
+   45 Statements: RETURN • Expr SEMI
 
-    RP  偏移，并进入状态 89
+    ID   偏移，并进入状态 65
+    NUM  偏移，并进入状态 66
+    NOT  偏移，并进入状态 67
+    LP   偏移，并进入状态 68
+
+    Expr       转到状态 114
+    Bool_Expr  转到状态 70
+    Add_Expr   转到状态 71
+    term       转到状态 72
+    factor     转到状态 73
 
 
 状态 81
 
-   40 Bool_Expr: Add_Expr RELOP Add_Expr •
-   42 Add_Expr: Add_Expr • PLUS term
-   43         | Add_Expr • MINUS term
+   51 WriteStat: WRITE • Expr
 
-    PLUS   偏移，并进入状态 70
-    MINUS  偏移，并进入状态 71
+    ID   偏移，并进入状态 65
+    NUM  偏移，并进入状态 66
+    NOT  偏移，并进入状态 67
+    LP   偏移，并进入状态 68
 
-    $default  使用规则 40 以归约 (Bool_Expr)
+    Expr       转到状态 115
+    Bool_Expr  转到状态 70
+    Add_Expr   转到状态 71
+    term       转到状态 72
+    factor     转到状态 73
 
 
 状态 82
 
-   42 Add_Expr: Add_Expr PLUS term •
-   45 term: term • STAR factor
-   46     | term • DIV factor
+   52 ReadStat: READ • ID
 
-    STAR  偏移，并进入状态 72
-    DIV   偏移，并进入状态 73
-
-    $default  使用规则 42 以归约 (Add_Expr)
+    ID  偏移，并进入状态 116
 
 
 状态 83
 
-   43 Add_Expr: Add_Expr MINUS term •
-   45 term: term • STAR factor
-   46     | term • DIV factor
+   59 CallStat: CALL • ID LP RP
 
-    STAR  偏移，并进入状态 72
-    DIV   偏移，并进入状态 73
-
-    $default  使用规则 43 以归约 (Add_Expr)
+    ID  偏移，并进入状态 117
 
 
 状态 84
 
-   45 term: term STAR factor •
+   15 FunBody: LC DefList StatList • RC
 
-    $default  使用规则 45 以归约 (term)
+    RC  偏移，并进入状态 118
 
 
 状态 85
 
-   46 term: term DIV factor •
+   35 StatList: Statements • StatList
 
-    $default  使用规则 46 以归约 (term)
+    error   偏移，并进入状态 74
+    ID      偏移，并进入状态 65
+    NUM     偏移，并进入状态 66
+    SEMI    偏移，并进入状态 75
+    NOT     偏移，并进入状态 67
+    LP      偏移，并进入状态 68
+    LC      偏移，并进入状态 76
+    IF      偏移，并进入状态 77
+    WHILE   偏移，并进入状态 78
+    FOR     偏移，并进入状态 79
+    RETURN  偏移，并进入状态 80
+    WRITE   偏移，并进入状态 81
+    READ    偏移，并进入状态 82
+    CALL    偏移，并进入状态 83
+
+    RC  使用规则 36 以归约 (StatList)
+
+    StatList      转到状态 119
+    Statements    转到状态 85
+    IfStat        转到状态 86
+    WhileStat     转到状态 87
+    ForStat       转到状态 88
+    WriteStat     转到状态 89
+    ReadStat      转到状态 90
+    CompoundStat  转到状态 91
+    ExprStat      转到状态 92
+    CallStat      转到状态 93
+    Expr          转到状态 94
+    Bool_Expr     转到状态 70
+    Add_Expr      转到状态 71
+    term          转到状态 72
+    factor        转到状态 73
 
 
 状态 86
 
-   22 IfStat: IF LP Expr RP • Statements ElseStat
-   23       | IF LP Expr RP • Statements
+   37 Statements: IfStat •
 
-    error  偏移，并进入状态 23
-    ID     偏移，并进入状态 24
-    NUM    偏移，并进入状态 25
-    SEMI   偏移，并进入状态 26
-    LP     偏移，并进入状态 27
-    LC     偏移，并进入状态 28
-    IF     偏移，并进入状态 29
-    WHILE  偏移，并进入状态 30
-    FOR    偏移，并进入状态 31
-    WRITE  偏移，并进入状态 32
-    READ   偏移，并进入状态 33
-    CALL   偏移，并进入状态 34
-
-    Statements    转到状态 90
-    IfStat        转到状态 37
-    WhileStat     转到状态 38
-    ForStat       转到状态 39
-    WriteStat     转到状态 40
-    ReadStat      转到状态 41
-    CompoundStat  转到状态 42
-    ExprStat      转到状态 43
-    CallStat      转到状态 44
-    Expr          转到状态 45
-    Bool_Expr     转到状态 46
-    Add_Expr      转到状态 47
-    term          转到状态 48
-    factor        转到状态 49
+    $default  使用规则 37 以归约 (Statements)
 
 
 状态 87
 
-   25 WhileStat: WHILE LP Expr RP • Statements
+   38 Statements: WhileStat •
 
-    error  偏移，并进入状态 23
-    ID     偏移，并进入状态 24
-    NUM    偏移，并进入状态 25
-    SEMI   偏移，并进入状态 26
-    LP     偏移，并进入状态 27
-    LC     偏移，并进入状态 28
-    IF     偏移，并进入状态 29
-    WHILE  偏移，并进入状态 30
-    FOR    偏移，并进入状态 31
-    WRITE  偏移，并进入状态 32
-    READ   偏移，并进入状态 33
-    CALL   偏移，并进入状态 34
-
-    Statements    转到状态 91
-    IfStat        转到状态 37
-    WhileStat     转到状态 38
-    ForStat       转到状态 39
-    WriteStat     转到状态 40
-    ReadStat      转到状态 41
-    CompoundStat  转到状态 42
-    ExprStat      转到状态 43
-    CallStat      转到状态 44
-    Expr          转到状态 45
-    Bool_Expr     转到状态 46
-    Add_Expr      转到状态 47
-    term          转到状态 48
-    factor        转到状态 49
+    $default  使用规则 38 以归约 (Statements)
 
 
 状态 88
 
-   26 ForStat: FOR LP Expr SEMI • Expr SEMI Expr RP Statements
+   39 Statements: ForStat •
 
-    ID   偏移，并进入状态 24
-    NUM  偏移，并进入状态 25
-    LP   偏移，并进入状态 27
-
-    Expr       转到状态 92
-    Bool_Expr  转到状态 46
-    Add_Expr   转到状态 47
-    term       转到状态 48
-    factor     转到状态 49
+    $default  使用规则 39 以归约 (Statements)
 
 
 状态 89
 
-   35 CallStat: CALL ID LP RP •
+   41 Statements: WriteStat •
 
-    $default  使用规则 35 以归约 (CallStat)
+    $default  使用规则 41 以归约 (Statements)
 
 
 状态 90
 
-   22 IfStat: IF LP Expr RP Statements • ElseStat
-   23       | IF LP Expr RP Statements •
+   40 Statements: ReadStat •
 
-    ELSE  偏移，并进入状态 93
-
-    $default  使用规则 23 以归约 (IfStat)
-
-    ElseStat  转到状态 94
+    $default  使用规则 40 以归约 (Statements)
 
 
 状态 91
 
-   25 WhileStat: WHILE LP Expr RP Statements •
+   42 Statements: CompoundStat •
 
-    $default  使用规则 25 以归约 (WhileStat)
+    $default  使用规则 42 以归约 (Statements)
 
 
 状态 92
 
-   26 ForStat: FOR LP Expr SEMI Expr • SEMI Expr RP Statements
+   43 Statements: ExprStat •
 
-    SEMI  偏移，并进入状态 95
+    $default  使用规则 43 以归约 (Statements)
 
 
 状态 93
 
-   24 ElseStat: ELSE • Statements
+   44 Statements: CallStat •
 
-    error  偏移，并进入状态 23
-    ID     偏移，并进入状态 24
-    NUM    偏移，并进入状态 25
-    SEMI   偏移，并进入状态 26
-    LP     偏移，并进入状态 27
-    LC     偏移，并进入状态 28
-    IF     偏移，并进入状态 29
-    WHILE  偏移，并进入状态 30
-    FOR    偏移，并进入状态 31
-    WRITE  偏移，并进入状态 32
-    READ   偏移，并进入状态 33
-    CALL   偏移，并进入状态 34
-
-    Statements    转到状态 96
-    IfStat        转到状态 37
-    WhileStat     转到状态 38
-    ForStat       转到状态 39
-    WriteStat     转到状态 40
-    ReadStat      转到状态 41
-    CompoundStat  转到状态 42
-    ExprStat      转到状态 43
-    CallStat      转到状态 44
-    Expr          转到状态 45
-    Bool_Expr     转到状态 46
-    Add_Expr      转到状态 47
-    term          转到状态 48
-    factor        转到状态 49
+    $default  使用规则 44 以归约 (Statements)
 
 
 状态 94
 
-   22 IfStat: IF LP Expr RP Statements ElseStat •
+   55 ExprStat: Expr • SEMI
+   58         | Expr • error
 
-    $default  使用规则 22 以归约 (IfStat)
+    error  偏移，并进入状态 120
+    SEMI   偏移，并进入状态 121
 
 
 状态 95
 
-   26 ForStat: FOR LP Expr SEMI Expr SEMI • Expr RP Statements
+   12 VarList: Specifier VarDec COMMA VarList •
 
-    ID   偏移，并进入状态 24
-    NUM  偏移，并进入状态 25
-    LP   偏移，并进入状态 27
-
-    Expr       转到状态 97
-    Bool_Expr  转到状态 46
-    Add_Expr   转到状态 47
-    term       转到状态 48
-    factor     转到状态 49
+    $default  使用规则 12 以归约 (VarList)
 
 
 状态 96
 
-   24 ElseStat: ELSE Statements •
+   61 Expr: ID ASSIGNOP • Bool_Expr
 
-    $default  使用规则 24 以归约 (ElseStat)
+    ID   偏移，并进入状态 97
+    NUM  偏移，并进入状态 66
+    NOT  偏移，并进入状态 67
+    LP   偏移，并进入状态 68
+
+    Bool_Expr  转到状态 122
+    Add_Expr   转到状态 71
+    term       转到状态 72
+    factor     转到状态 73
 
 
 状态 97
 
-   26 ForStat: FOR LP Expr SEMI Expr SEMI Expr • RP Statements
+   75 factor: ID •
 
-    RP  偏移，并进入状态 98
+    $default  使用规则 75 以归约 (factor)
 
 
 状态 98
 
-   26 ForStat: FOR LP Expr SEMI Expr SEMI Expr RP • Statements
+   67 Bool_Expr: NOT Add_Expr •
+   69 Add_Expr: Add_Expr • PLUS term
+   70         | Add_Expr • MINUS term
 
-    error  偏移，并进入状态 23
-    ID     偏移，并进入状态 24
-    NUM    偏移，并进入状态 25
-    SEMI   偏移，并进入状态 26
-    LP     偏移，并进入状态 27
-    LC     偏移，并进入状态 28
-    IF     偏移，并进入状态 29
-    WHILE  偏移，并进入状态 30
-    FOR    偏移，并进入状态 31
-    WRITE  偏移，并进入状态 32
-    READ   偏移，并进入状态 33
-    CALL   偏移，并进入状态 34
+    PLUS   偏移，并进入状态 101
+    MINUS  偏移，并进入状态 102
 
-    Statements    转到状态 99
-    IfStat        转到状态 37
-    WhileStat     转到状态 38
-    ForStat       转到状态 39
-    WriteStat     转到状态 40
-    ReadStat      转到状态 41
-    CompoundStat  转到状态 42
-    ExprStat      转到状态 43
-    CallStat      转到状态 44
-    Expr          转到状态 45
-    Bool_Expr     转到状态 46
-    Add_Expr      转到状态 47
-    term          转到状态 48
-    factor        转到状态 49
+    $default  使用规则 67 以归约 (Bool_Expr)
 
 
 状态 99
 
-   26 ForStat: FOR LP Expr SEMI Expr SEMI Expr RP Statements •
+   69 Add_Expr: Add_Expr • PLUS term
+   70         | Add_Expr • MINUS term
+   74 factor: LP Add_Expr • RP
 
-    $default  使用规则 26 以归约 (ForStat)
+    PLUS   偏移，并进入状态 101
+    MINUS  偏移，并进入状态 102
+    RP     偏移，并进入状态 123
+
+
+状态 100
+
+   64 Bool_Expr: Add_Expr RELOP • Add_Expr
+
+    ID   偏移，并进入状态 97
+    NUM  偏移，并进入状态 66
+    LP   偏移，并进入状态 68
+
+    Add_Expr  转到状态 124
+    term      转到状态 72
+    factor    转到状态 73
+
+
+状态 101
+
+   69 Add_Expr: Add_Expr PLUS • term
+
+    ID   偏移，并进入状态 97
+    NUM  偏移，并进入状态 66
+    LP   偏移，并进入状态 68
+
+    term    转到状态 125
+    factor  转到状态 73
+
+
+状态 102
+
+   70 Add_Expr: Add_Expr MINUS • term
+
+    ID   偏移，并进入状态 97
+    NUM  偏移，并进入状态 66
+    LP   偏移，并进入状态 68
+
+    term    转到状态 126
+    factor  转到状态 73
+
+
+状态 103
+
+   65 Bool_Expr: Add_Expr AND • Add_Expr
+
+    ID   偏移，并进入状态 97
+    NUM  偏移，并进入状态 66
+    LP   偏移，并进入状态 68
+
+    Add_Expr  转到状态 127
+    term      转到状态 72
+    factor    转到状态 73
+
+
+状态 104
+
+   66 Bool_Expr: Add_Expr OR • Add_Expr
+
+    ID   偏移，并进入状态 97
+    NUM  偏移，并进入状态 66
+    LP   偏移，并进入状态 68
+
+    Add_Expr  转到状态 128
+    term      转到状态 72
+    factor    转到状态 73
+
+
+状态 105
+
+   72 term: term STAR • factor
+
+    ID   偏移，并进入状态 97
+    NUM  偏移，并进入状态 66
+    LP   偏移，并进入状态 68
+
+    factor  转到状态 129
+
+
+状态 106
+
+   73 term: term DIV • factor
+
+    ID   偏移，并进入状态 97
+    NUM  偏移，并进入状态 66
+    LP   偏移，并进入状态 68
+
+    factor  转到状态 130
+
+
+状态 107
+
+   57 ExprStat: error SEMI •
+
+    $default  使用规则 57 以归约 (ExprStat)
+
+
+状态 108
+
+   60 CallStat: error RP •
+
+    $default  使用规则 60 以归约 (CallStat)
+
+
+状态 109
+
+   54 CompoundStat: error RC •
+
+    $default  使用规则 54 以归约 (CompoundStat)
+
+
+状态 110
+
+   53 CompoundStat: LC StatList • RC
+
+    RC  偏移，并进入状态 131
+
+
+状态 111
+
+   46 IfStat: IF LP • Expr RP Statements ElseStat
+   47       | IF LP • Expr RP Statements
+
+    ID   偏移，并进入状态 65
+    NUM  偏移，并进入状态 66
+    NOT  偏移，并进入状态 67
+    LP   偏移，并进入状态 68
+
+    Expr       转到状态 132
+    Bool_Expr  转到状态 70
+    Add_Expr   转到状态 71
+    term       转到状态 72
+    factor     转到状态 73
+
+
+状态 112
+
+   49 WhileStat: WHILE LP • Expr RP Statements
+
+    ID   偏移，并进入状态 65
+    NUM  偏移，并进入状态 66
+    NOT  偏移，并进入状态 67
+    LP   偏移，并进入状态 68
+
+    Expr       转到状态 133
+    Bool_Expr  转到状态 70
+    Add_Expr   转到状态 71
+    term       转到状态 72
+    factor     转到状态 73
+
+
+状态 113
+
+   50 ForStat: FOR LP • Expr SEMI Expr SEMI Expr RP Statements
+
+    ID   偏移，并进入状态 65
+    NUM  偏移，并进入状态 66
+    NOT  偏移，并进入状态 67
+    LP   偏移，并进入状态 68
+
+    Expr       转到状态 134
+    Bool_Expr  转到状态 70
+    Add_Expr   转到状态 71
+    term       转到状态 72
+    factor     转到状态 73
+
+
+状态 114
+
+   45 Statements: RETURN Expr • SEMI
+
+    SEMI  偏移，并进入状态 135
+
+
+状态 115
+
+   51 WriteStat: WRITE Expr •
+
+    $default  使用规则 51 以归约 (WriteStat)
+
+
+状态 116
+
+   52 ReadStat: READ ID •
+
+    $default  使用规则 52 以归约 (ReadStat)
+
+
+状态 117
+
+   59 CallStat: CALL ID • LP RP
+
+    LP  偏移，并进入状态 136
+
+
+状态 118
+
+   15 FunBody: LC DefList StatList RC •
+
+    $default  使用规则 15 以归约 (FunBody)
+
+
+状态 119
+
+   35 StatList: Statements StatList •
+
+    $default  使用规则 35 以归约 (StatList)
+
+
+状态 120
+
+   58 ExprStat: Expr error •
+
+    $default  使用规则 58 以归约 (ExprStat)
+
+
+状态 121
+
+   55 ExprStat: Expr SEMI •
+
+    $default  使用规则 55 以归约 (ExprStat)
+
+
+状态 122
+
+   61 Expr: ID ASSIGNOP Bool_Expr •
+
+    $default  使用规则 61 以归约 (Expr)
+
+
+状态 123
+
+   74 factor: LP Add_Expr RP •
+
+    $default  使用规则 74 以归约 (factor)
+
+
+状态 124
+
+   64 Bool_Expr: Add_Expr RELOP Add_Expr •
+   69 Add_Expr: Add_Expr • PLUS term
+   70         | Add_Expr • MINUS term
+
+    PLUS   偏移，并进入状态 101
+    MINUS  偏移，并进入状态 102
+
+    $default  使用规则 64 以归约 (Bool_Expr)
+
+
+状态 125
+
+   69 Add_Expr: Add_Expr PLUS term •
+   72 term: term • STAR factor
+   73     | term • DIV factor
+
+    STAR  偏移，并进入状态 105
+    DIV   偏移，并进入状态 106
+
+    $default  使用规则 69 以归约 (Add_Expr)
+
+
+状态 126
+
+   70 Add_Expr: Add_Expr MINUS term •
+   72 term: term • STAR factor
+   73     | term • DIV factor
+
+    STAR  偏移，并进入状态 105
+    DIV   偏移，并进入状态 106
+
+    $default  使用规则 70 以归约 (Add_Expr)
+
+
+状态 127
+
+   65 Bool_Expr: Add_Expr AND Add_Expr •
+   69 Add_Expr: Add_Expr • PLUS term
+   70         | Add_Expr • MINUS term
+
+    PLUS   偏移，并进入状态 101
+    MINUS  偏移，并进入状态 102
+
+    $default  使用规则 65 以归约 (Bool_Expr)
+
+
+状态 128
+
+   66 Bool_Expr: Add_Expr OR Add_Expr •
+   69 Add_Expr: Add_Expr • PLUS term
+   70         | Add_Expr • MINUS term
+
+    PLUS   偏移，并进入状态 101
+    MINUS  偏移，并进入状态 102
+
+    $default  使用规则 66 以归约 (Bool_Expr)
+
+
+状态 129
+
+   72 term: term STAR factor •
+
+    $default  使用规则 72 以归约 (term)
+
+
+状态 130
+
+   73 term: term DIV factor •
+
+    $default  使用规则 73 以归约 (term)
+
+
+状态 131
+
+   53 CompoundStat: LC StatList RC •
+
+    $default  使用规则 53 以归约 (CompoundStat)
+
+
+状态 132
+
+   46 IfStat: IF LP Expr • RP Statements ElseStat
+   47       | IF LP Expr • RP Statements
+
+    RP  偏移，并进入状态 137
+
+
+状态 133
+
+   49 WhileStat: WHILE LP Expr • RP Statements
+
+    RP  偏移，并进入状态 138
+
+
+状态 134
+
+   50 ForStat: FOR LP Expr • SEMI Expr SEMI Expr RP Statements
+
+    SEMI  偏移，并进入状态 139
+
+
+状态 135
+
+   45 Statements: RETURN Expr SEMI •
+
+    $default  使用规则 45 以归约 (Statements)
+
+
+状态 136
+
+   59 CallStat: CALL ID LP • RP
+
+    RP  偏移，并进入状态 140
+
+
+状态 137
+
+   46 IfStat: IF LP Expr RP • Statements ElseStat
+   47       | IF LP Expr RP • Statements
+
+    error   偏移，并进入状态 74
+    ID      偏移，并进入状态 65
+    NUM     偏移，并进入状态 66
+    SEMI    偏移，并进入状态 75
+    NOT     偏移，并进入状态 67
+    LP      偏移，并进入状态 68
+    LC      偏移，并进入状态 76
+    IF      偏移，并进入状态 77
+    WHILE   偏移，并进入状态 78
+    FOR     偏移，并进入状态 79
+    RETURN  偏移，并进入状态 80
+    WRITE   偏移，并进入状态 81
+    READ    偏移，并进入状态 82
+    CALL    偏移，并进入状态 83
+
+    Statements    转到状态 141
+    IfStat        转到状态 86
+    WhileStat     转到状态 87
+    ForStat       转到状态 88
+    WriteStat     转到状态 89
+    ReadStat      转到状态 90
+    CompoundStat  转到状态 91
+    ExprStat      转到状态 92
+    CallStat      转到状态 93
+    Expr          转到状态 94
+    Bool_Expr     转到状态 70
+    Add_Expr      转到状态 71
+    term          转到状态 72
+    factor        转到状态 73
+
+
+状态 138
+
+   49 WhileStat: WHILE LP Expr RP • Statements
+
+    error   偏移，并进入状态 74
+    ID      偏移，并进入状态 65
+    NUM     偏移，并进入状态 66
+    SEMI    偏移，并进入状态 75
+    NOT     偏移，并进入状态 67
+    LP      偏移，并进入状态 68
+    LC      偏移，并进入状态 76
+    IF      偏移，并进入状态 77
+    WHILE   偏移，并进入状态 78
+    FOR     偏移，并进入状态 79
+    RETURN  偏移，并进入状态 80
+    WRITE   偏移，并进入状态 81
+    READ    偏移，并进入状态 82
+    CALL    偏移，并进入状态 83
+
+    Statements    转到状态 142
+    IfStat        转到状态 86
+    WhileStat     转到状态 87
+    ForStat       转到状态 88
+    WriteStat     转到状态 89
+    ReadStat      转到状态 90
+    CompoundStat  转到状态 91
+    ExprStat      转到状态 92
+    CallStat      转到状态 93
+    Expr          转到状态 94
+    Bool_Expr     转到状态 70
+    Add_Expr      转到状态 71
+    term          转到状态 72
+    factor        转到状态 73
+
+
+状态 139
+
+   50 ForStat: FOR LP Expr SEMI • Expr SEMI Expr RP Statements
+
+    ID   偏移，并进入状态 65
+    NUM  偏移，并进入状态 66
+    NOT  偏移，并进入状态 67
+    LP   偏移，并进入状态 68
+
+    Expr       转到状态 143
+    Bool_Expr  转到状态 70
+    Add_Expr   转到状态 71
+    term       转到状态 72
+    factor     转到状态 73
+
+
+状态 140
+
+   59 CallStat: CALL ID LP RP •
+
+    $default  使用规则 59 以归约 (CallStat)
+
+
+状态 141
+
+   46 IfStat: IF LP Expr RP Statements • ElseStat
+   47       | IF LP Expr RP Statements •
+
+    ELSE  偏移，并进入状态 144
+
+    $default  使用规则 47 以归约 (IfStat)
+
+    ElseStat  转到状态 145
+
+
+状态 142
+
+   49 WhileStat: WHILE LP Expr RP Statements •
+
+    $default  使用规则 49 以归约 (WhileStat)
+
+
+状态 143
+
+   50 ForStat: FOR LP Expr SEMI Expr • SEMI Expr RP Statements
+
+    SEMI  偏移，并进入状态 146
+
+
+状态 144
+
+   48 ElseStat: ELSE • Statements
+
+    error   偏移，并进入状态 74
+    ID      偏移，并进入状态 65
+    NUM     偏移，并进入状态 66
+    SEMI    偏移，并进入状态 75
+    NOT     偏移，并进入状态 67
+    LP      偏移，并进入状态 68
+    LC      偏移，并进入状态 76
+    IF      偏移，并进入状态 77
+    WHILE   偏移，并进入状态 78
+    FOR     偏移，并进入状态 79
+    RETURN  偏移，并进入状态 80
+    WRITE   偏移，并进入状态 81
+    READ    偏移，并进入状态 82
+    CALL    偏移，并进入状态 83
+
+    Statements    转到状态 147
+    IfStat        转到状态 86
+    WhileStat     转到状态 87
+    ForStat       转到状态 88
+    WriteStat     转到状态 89
+    ReadStat      转到状态 90
+    CompoundStat  转到状态 91
+    ExprStat      转到状态 92
+    CallStat      转到状态 93
+    Expr          转到状态 94
+    Bool_Expr     转到状态 70
+    Add_Expr      转到状态 71
+    term          转到状态 72
+    factor        转到状态 73
+
+
+状态 145
+
+   46 IfStat: IF LP Expr RP Statements ElseStat •
+
+    $default  使用规则 46 以归约 (IfStat)
+
+
+状态 146
+
+   50 ForStat: FOR LP Expr SEMI Expr SEMI • Expr RP Statements
+
+    ID   偏移，并进入状态 65
+    NUM  偏移，并进入状态 66
+    NOT  偏移，并进入状态 67
+    LP   偏移，并进入状态 68
+
+    Expr       转到状态 148
+    Bool_Expr  转到状态 70
+    Add_Expr   转到状态 71
+    term       转到状态 72
+    factor     转到状态 73
+
+
+状态 147
+
+   48 ElseStat: ELSE Statements •
+
+    $default  使用规则 48 以归约 (ElseStat)
+
+
+状态 148
+
+   50 ForStat: FOR LP Expr SEMI Expr SEMI Expr • RP Statements
+
+    RP  偏移，并进入状态 149
+
+
+状态 149
+
+   50 ForStat: FOR LP Expr SEMI Expr SEMI Expr RP • Statements
+
+    error   偏移，并进入状态 74
+    ID      偏移，并进入状态 65
+    NUM     偏移，并进入状态 66
+    SEMI    偏移，并进入状态 75
+    NOT     偏移，并进入状态 67
+    LP      偏移，并进入状态 68
+    LC      偏移，并进入状态 76
+    IF      偏移，并进入状态 77
+    WHILE   偏移，并进入状态 78
+    FOR     偏移，并进入状态 79
+    RETURN  偏移，并进入状态 80
+    WRITE   偏移，并进入状态 81
+    READ    偏移，并进入状态 82
+    CALL    偏移，并进入状态 83
+
+    Statements    转到状态 150
+    IfStat        转到状态 86
+    WhileStat     转到状态 87
+    ForStat       转到状态 88
+    WriteStat     转到状态 89
+    ReadStat      转到状态 90
+    CompoundStat  转到状态 91
+    ExprStat      转到状态 92
+    CallStat      转到状态 93
+    Expr          转到状态 94
+    Bool_Expr     转到状态 70
+    Add_Expr      转到状态 71
+    term          转到状态 72
+    factor        转到状态 73
+
+
+状态 150
+
+   50 ForStat: FOR LP Expr SEMI Expr SEMI Expr RP Statements •
+
+    $default  使用规则 50 以归约 (ForStat)

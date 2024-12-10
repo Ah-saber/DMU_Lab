@@ -1,7 +1,19 @@
-main()
+struct aa{
+    int a, b;
+}A;
+int a;
+int woshifun(int a, int b)
 {
-    int woshidabian
-    int a;
-    a = 1
-    b = 2
+    return a + b;
+}
+
+int main()
+{
+    int woshidabian, woshigoushi, nihao;
+    int a[];
+    int c = 1;
+    a = 1;
+    b = 2;
+
+    return 0;
 }

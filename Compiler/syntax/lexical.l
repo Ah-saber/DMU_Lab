@@ -48,6 +48,7 @@ WHILE [wW][hH][iI][lL][eE]
 INT [iI][nN][tT]
 MAIN [mM][aA][iI][nN]
 RETURN [rR][eE][tT][uU][rR][nN]
+STRUCT [sS][tT][rR][uU][cC][tT]
 
 WRITE [wW][rR][iI][tT][eE]
 READ [rR][eE][aA][dD]
@@ -110,6 +111,7 @@ other .
 {MAIN} { yylval.node = createToken(yylineno, TOKEN_OTHER, "MAIN", yytext); return MAIN; }
 {CALL} { yylval.node = createToken(yylineno, TOKEN_OTHER, "CALL", yytext); return CALL; }
 {RETURN} { yylval.node = createToken(yylineno, TOKEN_OTHER, "RETURN", yytext); return RETURN; }
+{STRUCT} { yylval.node = createToken(yylineno, TOKEN_OTHER, "STRUCT", yytext); return STRUCT; }
 
 {ID} { yylval.node = createToken(yylineno, TOKEN_ID, "ID", yytext); return ID; }
 {NUM} { yylval.node = createToken(yylineno, TOKEN_INT, "NUM", yytext); return NUM; }
