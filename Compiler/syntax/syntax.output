@@ -30,7 +30,7 @@
    15 FunBody: LC DefList StatList RC
    16        | error RC
 
-   17 Specifier: INT
+   17 Specifier: TYPE
    18          | StructSpecifier
 
    19 StructSpecifier: STRUCT OptTag LC DefList RC
@@ -53,7 +53,7 @@
    30    | VarDec ASSIGNOP Expr
 
    31 VarDec: ID
-   32       | VarDec LB NUM RB
+   32       | VarDec LB INT RB
    33       | ID error
    34       | VarDec LB error RB
 
@@ -113,16 +113,16 @@
 
    74 factor: LP Add_Expr RP
    75       | ID
-   76       | NUM
+   76       | INT
 
 
 终结语词，附有它们出现处的规则
 
     $end (0) 0
     error (256) 6 16 33 34 54 57 58 60
-    INT <node> (258) 17
+    INT <node> (258) 32 76
     ID <node> (259) 9 10 21 23 31 33 52 59 61 75
-    NUM <node> (260) 32 76
+    TYPE <node> (260) 17
     COMMA <node> (261) 12 14 28
     DOT <node> (262)
     SEMI <node> (263) 4 5 26 45 50 55 56 57
@@ -260,7 +260,7 @@
     0 $accept: • Program $end
 
     error   偏移，并进入状态 1
-    INT     偏移，并进入状态 2
+    TYPE    偏移，并进入状态 2
     STRUCT  偏移，并进入状态 3
 
     Program          转到状态 4
@@ -274,7 +274,7 @@
     6 CodeDec: error • CodeDec
 
     error   偏移，并进入状态 1
-    INT     偏移，并进入状态 2
+    TYPE    偏移，并进入状态 2
     STRUCT  偏移，并进入状态 3
 
     CodeDec          转到状态 8
@@ -284,7 +284,7 @@
 
 状态 2
 
-   17 Specifier: INT •
+   17 Specifier: TYPE •
 
     $default  使用规则 17 以归约 (Specifier)
 
@@ -397,7 +397,7 @@
     5 CodeDec: Specifier SEMI • CodeDec
 
     error   偏移，并进入状态 1
-    INT     偏移，并进入状态 2
+    TYPE    偏移，并进入状态 2
     STRUCT  偏移，并进入状态 3
 
     CodeDec          转到状态 23
@@ -425,7 +425,7 @@
     3 CodeDec: Specifier FunDec • CodeDec
 
     error   偏移，并进入状态 1
-    INT     偏移，并进入状态 2
+    TYPE    偏移，并进入状态 2
     STRUCT  偏移，并进入状态 3
 
     CodeDec          转到状态 25
@@ -444,7 +444,7 @@
 
    13 ExtDecList: VarDec •
    14           | VarDec • COMMA ExtDecList
-   32 VarDec: VarDec • LB NUM RB
+   32 VarDec: VarDec • LB INT RB
    34       | VarDec • LB error RB
 
     COMMA  偏移，并进入状态 27
@@ -457,7 +457,7 @@
 
    19 StructSpecifier: STRUCT OptTag LC • DefList RC
 
-    INT     偏移，并进入状态 2
+    TYPE    偏移，并进入状态 2
     STRUCT  偏移，并进入状态 3
 
     $default  使用规则 25 以归约 (DefList)
@@ -480,7 +480,7 @@
     9 FunDec: ID LP • VarList RP FunBody
    10       | ID LP • RP FunBody
 
-    INT     偏移，并进入状态 2
+    TYPE    偏移，并进入状态 2
     RP      偏移，并进入状态 32
     STRUCT  偏移，并进入状态 3
 
@@ -501,7 +501,7 @@
     7 MainDec: MAIN LP • VarList RP FunBody
     8        | MAIN LP • RP FunBody
 
-    INT     偏移，并进入状态 2
+    TYPE    偏移，并进入状态 2
     RP      偏移，并进入状态 35
     STRUCT  偏移，并进入状态 3
 
@@ -522,7 +522,7 @@
     4 CodeDec: Specifier ExtDecList SEMI • CodeDec
 
     error   偏移，并进入状态 1
-    INT     偏移，并进入状态 2
+    TYPE    偏移，并进入状态 2
     STRUCT  偏移，并进入状态 3
 
     CodeDec          转到状态 37
@@ -542,11 +542,11 @@
 
 状态 28
 
-   32 VarDec: VarDec LB • NUM RB
+   32 VarDec: VarDec LB • INT RB
    34       | VarDec LB • error RB
 
     error  偏移，并进入状态 40
-    NUM    偏移，并进入状态 41
+    INT    偏移，并进入状态 41
 
 
 状态 29
@@ -571,7 +571,7 @@
 
    24 DefList: Def • DefList
 
-    INT     偏移，并进入状态 2
+    TYPE    偏移，并进入状态 2
     STRUCT  偏移，并进入状态 3
 
     $default  使用规则 25 以归约 (DefList)
@@ -663,7 +663,7 @@
 
 状态 41
 
-   32 VarDec: VarDec LB NUM • RB
+   32 VarDec: VarDec LB INT • RB
 
     RB  偏移，并进入状态 55
 
@@ -689,7 +689,7 @@
 
    29 Dec: VarDec •
    30    | VarDec • ASSIGNOP Expr
-   32 VarDec: VarDec • LB NUM RB
+   32 VarDec: VarDec • LB INT RB
    34       | VarDec • LB error RB
 
     ASSIGNOP  偏移，并进入状态 58
@@ -723,7 +723,7 @@
 
    15 FunBody: LC • DefList StatList RC
 
-    INT     偏移，并进入状态 2
+    TYPE    偏移，并进入状态 2
     STRUCT  偏移，并进入状态 3
 
     $default  使用规则 25 以归约 (DefList)
@@ -755,7 +755,7 @@
 
    11 VarList: Specifier VarDec •
    12        | Specifier VarDec • COMMA VarList
-   32 VarDec: VarDec • LB NUM RB
+   32 VarDec: VarDec • LB INT RB
    34       | VarDec • LB error RB
 
     COMMA  偏移，并进入状态 62
@@ -790,7 +790,7 @@
 
 状态 55
 
-   32 VarDec: VarDec LB NUM RB •
+   32 VarDec: VarDec LB INT RB •
 
     $default  使用规则 32 以归约 (VarDec)
 
@@ -817,8 +817,8 @@
 
    30 Dec: VarDec ASSIGNOP • Expr
 
-    ID   偏移，并进入状态 65
-    NUM  偏移，并进入状态 66
+    INT  偏移，并进入状态 65
+    ID   偏移，并进入状态 66
     NOT  偏移，并进入状态 67
     LP   偏移，并进入状态 68
 
@@ -841,8 +841,8 @@
    15 FunBody: LC DefList • StatList RC
 
     error   偏移，并进入状态 74
-    ID      偏移，并进入状态 65
-    NUM     偏移，并进入状态 66
+    INT     偏移，并进入状态 65
+    ID      偏移，并进入状态 66
     SEMI    偏移，并进入状态 75
     NOT     偏移，并进入状态 67
     LP      偏移，并进入状态 68
@@ -885,7 +885,7 @@
 
    12 VarList: Specifier VarDec COMMA • VarList
 
-    INT     偏移，并进入状态 2
+    TYPE    偏移，并进入状态 2
     STRUCT  偏移，并进入状态 3
 
     VarList          转到状态 95
@@ -909,6 +909,13 @@
 
 状态 65
 
+   76 factor: INT •
+
+    $default  使用规则 76 以归约 (factor)
+
+
+状态 66
+
    61 Expr: ID • ASSIGNOP Bool_Expr
    75 factor: ID •
 
@@ -917,19 +924,12 @@
     $default  使用规则 75 以归约 (factor)
 
 
-状态 66
-
-   76 factor: NUM •
-
-    $default  使用规则 76 以归约 (factor)
-
-
 状态 67
 
    67 Bool_Expr: NOT • Add_Expr
 
+    INT  偏移，并进入状态 65
     ID   偏移，并进入状态 97
-    NUM  偏移，并进入状态 66
     LP   偏移，并进入状态 68
 
     Add_Expr  转到状态 98
@@ -941,8 +941,8 @@
 
    74 factor: LP • Add_Expr RP
 
+    INT  偏移，并进入状态 65
     ID   偏移，并进入状态 97
-    NUM  偏移，并进入状态 66
     LP   偏移，并进入状态 68
 
     Add_Expr  转到状态 99
@@ -1024,8 +1024,8 @@
    53 CompoundStat: LC • StatList RC
 
     error   偏移，并进入状态 74
-    ID      偏移，并进入状态 65
-    NUM     偏移，并进入状态 66
+    INT     偏移，并进入状态 65
+    ID      偏移，并进入状态 66
     SEMI    偏移，并进入状态 75
     NOT     偏移，并进入状态 67
     LP      偏移，并进入状态 68
@@ -1083,8 +1083,8 @@
 
    45 Statements: RETURN • Expr SEMI
 
-    ID   偏移，并进入状态 65
-    NUM  偏移，并进入状态 66
+    INT  偏移，并进入状态 65
+    ID   偏移，并进入状态 66
     NOT  偏移，并进入状态 67
     LP   偏移，并进入状态 68
 
@@ -1099,8 +1099,8 @@
 
    51 WriteStat: WRITE • Expr
 
-    ID   偏移，并进入状态 65
-    NUM  偏移，并进入状态 66
+    INT  偏移，并进入状态 65
+    ID   偏移，并进入状态 66
     NOT  偏移，并进入状态 67
     LP   偏移，并进入状态 68
 
@@ -1137,8 +1137,8 @@
    35 StatList: Statements • StatList
 
     error   偏移，并进入状态 74
-    ID      偏移，并进入状态 65
-    NUM     偏移，并进入状态 66
+    INT     偏移，并进入状态 65
+    ID      偏移，并进入状态 66
     SEMI    偏移，并进入状态 75
     NOT     偏移，并进入状态 67
     LP      偏移，并进入状态 68
@@ -1246,8 +1246,8 @@
 
    61 Expr: ID ASSIGNOP • Bool_Expr
 
+    INT  偏移，并进入状态 65
     ID   偏移，并进入状态 97
-    NUM  偏移，并进入状态 66
     NOT  偏移，并进入状态 67
     LP   偏移，并进入状态 68
 
@@ -1291,8 +1291,8 @@
 
    64 Bool_Expr: Add_Expr RELOP • Add_Expr
 
+    INT  偏移，并进入状态 65
     ID   偏移，并进入状态 97
-    NUM  偏移，并进入状态 66
     LP   偏移，并进入状态 68
 
     Add_Expr  转到状态 124
@@ -1304,8 +1304,8 @@
 
    69 Add_Expr: Add_Expr PLUS • term
 
+    INT  偏移，并进入状态 65
     ID   偏移，并进入状态 97
-    NUM  偏移，并进入状态 66
     LP   偏移，并进入状态 68
 
     term    转到状态 125
@@ -1316,8 +1316,8 @@
 
    70 Add_Expr: Add_Expr MINUS • term
 
+    INT  偏移，并进入状态 65
     ID   偏移，并进入状态 97
-    NUM  偏移，并进入状态 66
     LP   偏移，并进入状态 68
 
     term    转到状态 126
@@ -1328,8 +1328,8 @@
 
    65 Bool_Expr: Add_Expr AND • Add_Expr
 
+    INT  偏移，并进入状态 65
     ID   偏移，并进入状态 97
-    NUM  偏移，并进入状态 66
     LP   偏移，并进入状态 68
 
     Add_Expr  转到状态 127
@@ -1341,8 +1341,8 @@
 
    66 Bool_Expr: Add_Expr OR • Add_Expr
 
+    INT  偏移，并进入状态 65
     ID   偏移，并进入状态 97
-    NUM  偏移，并进入状态 66
     LP   偏移，并进入状态 68
 
     Add_Expr  转到状态 128
@@ -1354,8 +1354,8 @@
 
    72 term: term STAR • factor
 
+    INT  偏移，并进入状态 65
     ID   偏移，并进入状态 97
-    NUM  偏移，并进入状态 66
     LP   偏移，并进入状态 68
 
     factor  转到状态 129
@@ -1365,8 +1365,8 @@
 
    73 term: term DIV • factor
 
+    INT  偏移，并进入状态 65
     ID   偏移，并进入状态 97
-    NUM  偏移，并进入状态 66
     LP   偏移，并进入状态 68
 
     factor  转到状态 130
@@ -1405,8 +1405,8 @@
    46 IfStat: IF LP • Expr RP Statements ElseStat
    47       | IF LP • Expr RP Statements
 
-    ID   偏移，并进入状态 65
-    NUM  偏移，并进入状态 66
+    INT  偏移，并进入状态 65
+    ID   偏移，并进入状态 66
     NOT  偏移，并进入状态 67
     LP   偏移，并进入状态 68
 
@@ -1421,8 +1421,8 @@
 
    49 WhileStat: WHILE LP • Expr RP Statements
 
-    ID   偏移，并进入状态 65
-    NUM  偏移，并进入状态 66
+    INT  偏移，并进入状态 65
+    ID   偏移，并进入状态 66
     NOT  偏移，并进入状态 67
     LP   偏移，并进入状态 68
 
@@ -1437,8 +1437,8 @@
 
    50 ForStat: FOR LP • Expr SEMI Expr SEMI Expr RP Statements
 
-    ID   偏移，并进入状态 65
-    NUM  偏移，并进入状态 66
+    INT  偏移，并进入状态 65
+    ID   偏移，并进入状态 66
     NOT  偏移，并进入状态 67
     LP   偏移，并进入状态 68
 
@@ -1642,8 +1642,8 @@
    47       | IF LP Expr RP • Statements
 
     error   偏移，并进入状态 74
-    ID      偏移，并进入状态 65
-    NUM     偏移，并进入状态 66
+    INT     偏移，并进入状态 65
+    ID      偏移，并进入状态 66
     SEMI    偏移，并进入状态 75
     NOT     偏移，并进入状态 67
     LP      偏移，并进入状态 68
@@ -1677,8 +1677,8 @@
    49 WhileStat: WHILE LP Expr RP • Statements
 
     error   偏移，并进入状态 74
-    ID      偏移，并进入状态 65
-    NUM     偏移，并进入状态 66
+    INT     偏移，并进入状态 65
+    ID      偏移，并进入状态 66
     SEMI    偏移，并进入状态 75
     NOT     偏移，并进入状态 67
     LP      偏移，并进入状态 68
@@ -1711,8 +1711,8 @@
 
    50 ForStat: FOR LP Expr SEMI • Expr SEMI Expr RP Statements
 
-    ID   偏移，并进入状态 65
-    NUM  偏移，并进入状态 66
+    INT  偏移，并进入状态 65
+    ID   偏移，并进入状态 66
     NOT  偏移，并进入状态 67
     LP   偏移，并进入状态 68
 
@@ -1761,8 +1761,8 @@
    48 ElseStat: ELSE • Statements
 
     error   偏移，并进入状态 74
-    ID      偏移，并进入状态 65
-    NUM     偏移，并进入状态 66
+    INT     偏移，并进入状态 65
+    ID      偏移，并进入状态 66
     SEMI    偏移，并进入状态 75
     NOT     偏移，并进入状态 67
     LP      偏移，并进入状态 68
@@ -1802,8 +1802,8 @@
 
    50 ForStat: FOR LP Expr SEMI Expr SEMI • Expr RP Statements
 
-    ID   偏移，并进入状态 65
-    NUM  偏移，并进入状态 66
+    INT  偏移，并进入状态 65
+    ID   偏移，并进入状态 66
     NOT  偏移，并进入状态 67
     LP   偏移，并进入状态 68
 
@@ -1833,8 +1833,8 @@
    50 ForStat: FOR LP Expr SEMI Expr SEMI Expr RP • Statements
 
     error   偏移，并进入状态 74
-    ID      偏移，并进入状态 65
-    NUM     偏移，并进入状态 66
+    INT     偏移，并进入状态 65
+    ID      偏移，并进入状态 66
     SEMI    偏移，并进入状态 75
     NOT     偏移，并进入状态 67
     LP      偏移，并进入状态 68

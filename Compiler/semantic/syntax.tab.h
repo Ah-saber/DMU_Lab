@@ -84,7 +84,8 @@ extern int yydebug;
     WRITE = 285,                   /* WRITE  */
     READ = 286,                    /* READ  */
     CALL = 287,                    /* CALL  */
-    MAIN = 288                     /* MAIN  */
+    MAIN = 288,                    /* MAIN  */
+    LOWER_THAN_ELSE = 289          /* LOWER_THAN_ELSE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -97,7 +98,7 @@ union YYSTYPE
 
     pNode node;
 
-#line 101 "syntax.tab.h"
+#line 102 "syntax.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

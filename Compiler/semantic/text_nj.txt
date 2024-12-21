@@ -1,0 +1,27 @@
+struct FastFood {
+int yum;
+};
+
+struct Burger {
+int juice;
+};
+
+int buyAFood(int money) {
+	struct FastFood cheap;
+	struct Burger expensive;
+	int realMoney, Burgers;
+	cheap.yum = 12;
+	cheap.yum = 3;
+	expensive.juice = 3;
+	if(cheap.yum == 4) {
+		realMoney = money - cheap.yum;
+		return realMoney;
+	} else {
+		Burgers = money - expensive.juice;
+		return Burgers;
+	}
+}
+int main(int argc)
+{
+    int a = 1;
+}

@@ -4,8 +4,10 @@
 //type judge, INT,ID output the value; Other output nothing; Not output lineno
 typedef enum nodeType{
     TOKEN_INT,  
+    TOKEN_FLOAT,
     TOKEN_ID,
     TOKEN_OTHER,
+    TOKEN_TYPE,
     TOKEN_CHAR,
     NOT_A_TOKEN,
 } NodeType;

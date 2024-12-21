@@ -18,7 +18,7 @@
         synError = TRUE;
         if(errors_msg != NULL)
         {
-            fprintf(stderr, "Error type B at line %d: %s.\n", yylineno, errors_msg);
+            fprintf(stderr, "Error type B at line %d: %s", yylineno, errors_msg);
             errors_msg = NULL;
         }
         else fprintf(stderr, "Error type B at line %d: %s.\n", yylineno, msg);
@@ -37,8 +37,8 @@
 
 // tokens
 
-%token <node> INT
-%token <node> ID NUM
+%token <node> INT 
+%token <node> ID TYPE
 %token <node> COMMA
 %token <node> DOT
 %token <node> SEMI
@@ -90,7 +90,7 @@ CodeDec:                Specifier MainDec                                       
     |                   Specifier FunDec CodeDec                                {$$ = createNode(@$.first_line, NOT_A_TOKEN, "CodeDec", 3, $1, $2, $3); }
     |                   Specifier ExtDecList SEMI CodeDec                       {$$ = createNode(@$.first_line, NOT_A_TOKEN, "CodeDec", 4, $1, $2, $3, $4); }
     |                   Specifier SEMI CodeDec                                  {$$ = createNode(@$.first_line, NOT_A_TOKEN, "CodeDec", 3, $1, $2, $3); }
-    |                   error CodeDec                                           {synError = TRUE;  }
+    |                   error CodeDec                                           {synError = TRUE;  fprintf(stderr, "Functions need to declare types\n");}
     ;
 MainDec:                MAIN LP VarList RP FunBody                              {$$ = createNode(@$.first_line, NOT_A_TOKEN, "MainDec", 5, $1, $2, $3, $4, $5); }
     |                   MAIN LP RP FunBody                                      {$$ = createNode(@$.first_line, NOT_A_TOKEN, "FunDec", 4, $1, $2, $3, $4); } 
@@ -108,7 +108,7 @@ FunBody:                LC DefList StatList RC                                  
     |                   error RC                                                {synError = TRUE;  }
     ;
 //Specifier
-Specifier:              INT                                                     {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Specifier", 1, $1);  }
+Specifier:              TYPE                                                     {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Specifier", 1, $1);  }
     |                   StructSpecifier                                         {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Specifier", 1, $1);  }
     ;   
 StructSpecifier:        STRUCT OptTag LC DefList RC                             {$$ = createNode(@$.first_line, NOT_A_TOKEN, "StructSpecifier", 5, $1, $2, $3, $4, $5);  }
@@ -133,9 +133,9 @@ Dec:                    VarDec                                                  
     |                   VarDec ASSIGNOP Expr/*定义赋值*/                        {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Dec", 3, $1, $2, $3);  }
     ;
 VarDec:                 ID                                                      {$$ = createNode(@$.first_line, NOT_A_TOKEN, "VarDec", 1, $1); }
-    |                   VarDec LB NUM RB/*数组*/                                {$$ = createNode(@$.first_line, NOT_A_TOKEN, "VarDec", 4, $1, $2, $3, $4);  }
+    |                   VarDec LB INT RB/*数组*/                                {$$ = createNode(@$.first_line, NOT_A_TOKEN, "VarDec", 4, $1, $2, $3, $4);  }
     |                   ID error                                                {synError = TRUE;}
-    |                   VarDec LB error RB                                      {synError = TRUE; }
+    |                   VarDec LB error RB                                      {synError = TRUE;  fprintf(stderr, "Integer declarations are required in square brackets\n");}
     ;   
 
 
@@ -172,10 +172,10 @@ CompoundStat:           LC StatList RC                                          
 ExprStat:               Expr SEMI                                               {$$ = createNode(@$.first_line, NOT_A_TOKEN, "ExprStat", 2, $1, $2);   }  
     |                   SEMI                                                    {$$ = createNode(@$.first_line, NOT_A_TOKEN, "ExprStat", 1, $1);   }  
     |                   error SEMI                                              {synError = TRUE;}
-    |                   Expr error                                              {synError = TRUE;}
+    |                   Expr error                                              {synError = TRUE; fprintf(stderr, "Statements need to end with a semicolon\n");}
     ;
 CallStat:               CALL ID LP RP                                           {$$ = createNode(@$.first_line, NOT_A_TOKEN, "CallStat", 4, $1, $2, $3, $4);   }  
-    |                   error RP                                                {synError = TRUE;}
+    |                   error RP                                                {synError = TRUE; }
     ;
 //factor
 Expr:                   ID ASSIGNOP Bool_Expr                                   {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 3, $1, $2, $3);   }  
@@ -197,7 +197,7 @@ term:                   factor                                                  
     ;
 factor:                 LP Add_Expr RP                                          {$$ = createNode(@$.first_line, NOT_A_TOKEN, "factor", 3, $1, $2, $3);   }  
     |                   ID                                                      {$$ = createNode(@$.first_line, NOT_A_TOKEN, "factor", 1, $1);   }  
-    |                   NUM                                                     {$$ = createNode(@$.first_line, NOT_A_TOKEN, "factor", 1, $1);   }  
+    |                   INT                                                     {$$ = createNode(@$.first_line, NOT_A_TOKEN, "factor", 1, $1);   } 
     ;
 %%
 

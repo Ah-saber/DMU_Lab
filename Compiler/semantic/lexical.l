@@ -112,7 +112,6 @@ other .
 
 {ID} { yylval.node = createToken(yylineno, TOKEN_ID, "ID", yytext); return ID; }
 {INT} { yylval.node = createToken(yylineno, TOKEN_INT, "INT", yytext); return INT; }
-{FLOAT} { yylval.node = createToken(yylineno, TOKEN_FLOAT, "FLOAT", yytext); /*return FLOAT;*/ }
 
 {PLUS} { yylval.node = createToken(yylineno, TOKEN_CHAR, "PLUS", yytext); return PLUS; }
 {MINUS} { yylval.node = createToken(yylineno, TOKEN_CHAR, "MINUS", yytext); return MINUS; }
@@ -121,7 +120,7 @@ other .
 {AND} { yylval.node = createToken(yylineno, TOKEN_CHAR, "AND", yytext); return AND; }
 {OR} { yylval.node = createToken(yylineno, TOKEN_CHAR, "OR", yytext); return OR; }
 {NOT} { yylval.node = createToken(yylineno, TOKEN_CHAR, "NOT", yytext); return NOT; }
-{DOT} { yylval.node = createToken(yylineno, TOKEN_CHAR, "DOT", yytext); /*return DOT;*/ }
+{DOT} { yylval.node = createToken(yylineno, TOKEN_CHAR, "DOT", yytext); return DOT; }
 {SEMI} { yylval.node = createToken(yylineno, TOKEN_CHAR, "SEMI", yytext); return SEMI; }
 {COMMA} { yylval.node = createToken(yylineno, TOKEN_CHAR, "COMMA", yytext); return COMMA; }
 {ASSIGNOP} { yylval.node = createToken(yylineno, TOKEN_CHAR, "ASSIGNOP", yytext); return ASSIGNOP; }
