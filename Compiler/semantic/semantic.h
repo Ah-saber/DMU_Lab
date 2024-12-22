@@ -167,7 +167,7 @@ pItem VarDec(pNode node, pType specifier);
 void FunDec(pNode node, pType returnType);
 void VarList(pNode node, pItem func);
 pFieldList ParamDec(pNode node);
-void FunBody(pNode node, pType returnType);
+void FunBody(pNode node, pType returnType, char* funcname);
 void CompoundStat(pNode node, pType returnType);
 void StatList(pNode node, pType returnType);
 void Statements(pNode node, pType returnType);

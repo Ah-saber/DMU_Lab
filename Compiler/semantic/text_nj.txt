@@ -24,4 +24,5 @@ int buyAFood(int money) {
 int main(int argc)
 {
     int a = 1;
+	b = 1;
 }

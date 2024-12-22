@@ -127,37 +127,37 @@ bool checkType(pType type1, pType type2) {
     }
 }
 
-void printType(pType type) {
-    if (type == NULL) {
-        printf("type is NULL.\n");
-    } else {
-        printf("type kind: %d\n", type->kind);
-        switch (type->kind) {
-            case BASIC:
-                printf("type basic: %d\n", type->u.basic);
-                break;
-            case ARRAY:
-                printf("array size: %d\n", type->u.array.size);
-                printType(type->u.array.elem);
-                break;
-            case STRUCTURE:
-                if (!type->u.structure.structName)
-                    printf("struct name is NULL\n");
-                else {
-                    printf("struct name is %s\n", type->u.structure.structName);
-                }
-                printFieldList(type->u.structure.field);
-                break;
-            case FUNCTION:
-                printf("function argc is %d\n", type->u.function.argc);
-                printf("function args:\n");
-                printFieldList(type->u.function.argv);
-                printf("function return type:\n");
-                printType(type->u.function.returnType);
-                break;
-        }
-    }
-}
+// void printType(pType type) {
+//     if (type == NULL) {
+//         printf("type is NULL.\n");
+//     } else {
+//         printf("type kind: %d\n", type->kind);
+//         switch (type->kind) {
+//             case BASIC:
+//                 printf("type basic: %d\n", type->u.basic);
+//                 break;
+//             case ARRAY:
+//                 printf("array size: %d\n", type->u.array.size);
+//                 printType(type->u.array.elem);
+//                 break;
+//             case STRUCTURE:
+//                 if (!type->u.structure.structName)
+//                     printf("struct name: NULL\n");
+//                 else {
+//                     printf("struct name: %s\n", type->u.structure.structName);
+//                 }
+//                 printFieldList(type->u.structure.field);
+//                 break;
+//             case FUNCTION:
+//                 printf("function argc: %d\n", type->u.function.argc);
+//                 printf("function args:\n");
+//                 printFieldList(type->u.function.argv);
+//                 printf("return type:\n");
+//                 printType(type->u.function.returnType);
+//                 break;
+//         }
+//     }
+// }
 
 // FieldList functions
 pFieldList newFieldList(char* newName, pType newType) {
@@ -210,16 +210,16 @@ void setFieldListName(pFieldList p, char* newName) {
     p->name = newString(newName);
 }
 
-void printFieldList(pFieldList fieldList) {
-    if (fieldList == NULL)
-        printf("fieldList is NULL\n");
-    else {
-        printf("fieldList name is: %s\n", fieldList->name);
-        printf("FieldList Type:\n");
-        printType(fieldList->type);
-        printFieldList(fieldList->tail);
-    }
-}
+// void printFieldList(pFieldList fieldList) {
+//     if (fieldList == NULL)
+//         printf("fieldList: NULL\n");
+//     else {
+//         printf("fieldList name: %s\n", fieldList->name);
+//         printf("FieldList Type:\n");
+//         printType(fieldList->type);
+//         printFieldList(fieldList->tail);
+//     }
+// }
 
 // tableItem functions
 pItem newItem(int symbolDepth, pFieldList pfield) {
@@ -384,23 +384,86 @@ void clearCurDepthStackList(pTable table) {
 
 // for Debug
 void printTable(pTable table) {
-    printf("----------------hash_table----------------\n");
+    printf("==================================== Hash Table ====================================\n");
     for (int i = 0; i < HASH_TABLE_SIZE; i++) {
         pItem item = getHashHead(table->hash, i);
         if (item) {
-            printf("[%d]", i);
+            printf("\n-- Bucket [%d] --\n", i);
             while (item) {
-                printf(" -> name: %s depth: %d\n", item->field->name,
-                       item->symbolDepth);
-                printf("========FiledList========\n");
+                printf("  [Symbol Name]  : %s\n", item->field->name);
+                printf("  [Symbol Depth] : %d\n", item->symbolDepth);
+                printf("  -------------------- Field List --------------------\n");
                 printFieldList(item->field);
-                printf("===========End===========\n");
+                printf("  ------------------------------------------------------\n");
                 item = item->nextHash;
             }
-            printf("\n");
         }
     }
-    printf("-------------------end--------------------\n");
+    printf("==================================== End of Hash Table ============================\n");
+}
+
+void printFieldList(pFieldList fieldList) {
+    if (fieldList == NULL) {
+        printf("    Field List: NULL\n");
+    } else {
+        printf("    Field Name     : %s\n", fieldList->name);
+        printf("    Field Type: \n");
+        printType(fieldList->type);
+        printFieldList(fieldList->tail);
+    }
+}
+
+void printType(pType type) {
+    if (type == NULL) {
+        printf("      Type: NULL\n");
+    } else {
+        printf("      Type Kind    : %d\n", type->kind);
+        switch (type->kind) {
+            case BASIC:
+                printf("      [Basic Type] : %d\n", type->u.basic);
+                break;
+            case ARRAY:
+                printf("      [Array]      : Size = %d\n", type->u.array.size);
+                printf("      Array Element Type:\n");
+                printType(type->u.array.elem);
+                break;
+            case STRUCTURE:
+                if (!type->u.structure.structName) {
+                    printf("      [Structure]  : Struct Name = NULL\n");
+                } else {
+                    printf("      [Structure]  : Struct Name = %s\n", type->u.structure.structName);
+                }
+                printf("    Fields as fllow:\n");
+                printFieldList(type->u.structure.field);
+                break;
+            case FUNCTION:
+                printf("      [Function]   : Arg Count = %d\n", type->u.function.argc);
+                printf("    Arguments as fllow:\n");
+                printFieldList(type->u.function.argv);
+                printf("      Return Type:\n");
+                printType(type->u.function.returnType);
+                break;
+        }
+    }
+}
+
+void printFun(pTable table, char *funcname){
+    assert(table != NULL);
+    pStack stack = table->stack;
+    printf("-------------------------------------- %s's ComStat Body -------------------------------------\n", funcname);
+    pItem item = getCurDepthStackHead(stack);
+        //printf("[%d]", i);
+    printf("------------------FiledList---------------\n");
+    while (item) {
+        //printf(" -> name: %s depth: %d\n", item->field->name,
+                //item->symbolDepth);  
+        printFieldList(item->field);
+        printf("-------------------------------\n"); 
+        item = item->nextSymbol;
+    }
+    //printf("------------------End---------------\n");
+    printf("\n");
+    printf("-------------------------------------- %s's ComStat Body -----------------------------------\n\n", funcname);
 }
 
 // Stack functions
@@ -500,14 +563,14 @@ void MainDec(pNode node){
         addTableItem(table, p);
     }
 
-    FunBody(tmp->brother, specifierType);
+    FunBody(tmp->brother, specifierType, "main");
     if (specifierType) deleteType(specifierType);
 }
 
 // Generate symbol table functions
 void CodeDec(pNode node) {
     assert(node != NULL);
-// CodeDec:                Specifier MainDec FunBody                                      {$$ = createNode(@$.first_line, NOT_A_TOKEN, "CodeDec", 2, $1, $2); }
+// CodeDec:                
 //     |                   Specifier FunDec FunBody                                {$$ = createNode(@$.first_line, NOT_A_TOKEN, "CodeDec", 2, $1, $2); }
 //     |                   Specifier ExtDecList SEMI                               {$$ = createNode(@$.first_line, NOT_A_TOKEN, "CodeDec", 3, $1, $2, $3); }
 //     |                   Specifier SEMI 
@@ -524,7 +587,7 @@ void CodeDec(pNode node) {
     else if (!strcmp(secondName, "FunDec")) {
         // TODO: process third situation
         FunDec(node->child->brother, specifierType);
-        FunBody(node->child->brother->brother, specifierType);
+        FunBody(node->child->brother->brother, specifierType, node->child->brother->child->val);
     }
     if (specifierType) deleteType(specifierType);
     // printTable(table);
@@ -785,7 +848,7 @@ pFieldList ParamDec(pNode node) {
     }
 }
 
-void FunBody(pNode node, pType returnType) {
+void FunBody(pNode node, pType returnType, char* name) {
     assert(node != NULL);
 // FunBody:                LC DefList StatList RC                                  {$$ = createNode(@$.first_line, NOT_A_TOKEN, "FunBody", 4, $1, $2, $3, $4);  }
 //     |                   error RC                                                {synError = TRUE;  }
@@ -800,7 +863,8 @@ void FunBody(pNode node, pType returnType) {
         StatList(temp, returnType);
     }
 
-    clearCurDepthStackList(table);
+    if(!semErrors) printFun(table, name);
+    clearCurDepthStackList(table); //出函数清空所有内部变量
 }
 
 void StatList(pNode node, pType returnType) {
@@ -833,7 +897,7 @@ void Statements(pNode node, pType returnType) {
 
     // Stmt -> CompSt
     else if (!strcmp(node->child->name, "CompoundStat"))
-        FunBody(node->child, returnType);
+        FunBody(node->child, returnType, "Expr");
 
     // Stmt -> RETURN ExprStat SEMI
     else if (!strcmp(node->child->name, "RETURN")) {
