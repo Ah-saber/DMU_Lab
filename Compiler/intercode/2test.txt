@@ -1,0 +1,95 @@
+// Dec
+Program:                ExtDefList                                              
+    ;
+ExtDefList:             CodeDec ExtDefList                                      
+    |                   MainDec                                                  
+    |                   error                                                
+    ;
+CodeDec:                Specifier FunDec FunBody                                
+    |                   Specifier ExtDecList SEMI                               
+    |                   Specifier SEMI                                         
+    |                   error SEMI                                              
+    ;                                                     
+MainDec:                Specifier MAIN LP VarList RP FunBody                    
+    |                   Specifier MAIN LP RP FunBody                            
+    ;   
+FunDec:                 ID LP VarList RP                                        
+    |                   ID LP RP                                                
+    |                   error RP                                                
+    ;
+VarList:                ParamDec                                                
+    |                   ParamDec COMMA VarList                                  
+    ;
+ParamDec:               Specifier VarDec                                        
+    ;
+ExtDecList:             VarDec                                                  
+    |                   VarDec COMMA ExtDecList                                 
+    ;
+FunBody:                LC DefList StatList RC                                  
+    |                   error RC                                                
+    ;
+//Specifier
+Specifier:              TYPE                                                    
+    |                   StructSpecifier                                          
+    ;   
+StructSpecifier:        STRUCT OptTag LC DefList RC                             
+    |                   STRUCT Tag                                              
+    ;
+OptTag:                 ID                                                      
+    |                                                                           
+    ;   
+Tag:                    ID                                                      
+    ;
+ 
+ //list
+DefList:                Def DefList                                             
+    |                                                                           
+    ;
+Def:                    Specifier DecList SEMI                                  
+    ;   
+DecList:                Dec                                                     
+    |                   Dec COMMA DecList                                       
+    ;
+Dec:                    VarDec                                                  
+    |                   VarDec ASSIGNOP Expr/*定义赋值*/                        
+    ;
+VarDec:                 ID                                                      
+    |                   VarDec LB INT RB/*数组*/                                 
+    |                   VarDec LB error RB                                       
+    ;   
+//stat
+StatList:               Statements StatList                                  
+    |                   NULL
+    ;
+Statements:             IF LP Expr RP Statements  %prec LOWER_THAN_ELSE         
+    |                   IF LP Expr RP Statements ELSE Statements                
+    |                   WHILE LP Expr RP Statements                             
+    |                   FOR LP Expr SEMI Expr SEMI Expr RP Statements           
+    |                   READ ID SEMI                                                
+    |                   WRITE Expr SEMI                                           
+    |                   FunBody                                                
+    |                   Expr SEMI                                                
+    |                   RETURN Expr SEMI/*RETUN*/                               
+    |                   error SEMI                                               
+    ;       
+Expr:                   ID LP Args RP                                           
+    |                   ID LP RP                                                
+    |                   Expr DOT ID                                             
+    |                   Expr LB Expr RB                                         
+    |                   NOT Expr                                                
+    |                   MINUS Expr                                              
+    |                   LP Expr RP                                              
+    |                   Expr ASSIGNOP Expr                                      
+    |                   Expr RELOP Expr                                        
+    |                   Expr AND Expr                                          
+    |                   Expr OR Expr                                           
+    |                   Expr PLUS Expr                                         
+    |                   Expr MINUS Expr                                        
+    |                   Expr STAR Expr                                         
+    |                   Expr DIV Expr                                          
+    |                   ID                                                      
+    |                   INT                                                     
+    ;
+Args :                  Expr COMMA Args                                        
+    |                   Expr                                                    
+    ; 

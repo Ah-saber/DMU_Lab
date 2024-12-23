@@ -1,5 +1,5 @@
 #include "node.h"
-#include "semantic.h"
+#include "inter.h"
 #include "syntax.tab.h"
 #include <stdbool.h>
 
@@ -36,17 +36,30 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    FILE* fm = fopen(argv[2], "wt+");
+    if(!fm)
+    {
+        perror(argv[2]);
+        return 1;
+    }
+
     //yydebug = 1;
     yyrestart(fs);
     yyparse();
 
-    if(!lexError && !synError){
+    if(!lexError && !synError)
+    {
         table = initTable();
-        //printTreeInfo(root, 0); //递归打印节点      
+        printTreeInfo(root, 0); //递归打印节点      
         traverseTree(root);
+
+        interCodeList = newInterCodeList();
         
-        if(!semErrors){
+        if(!semErrors)
+        {
             printTable(table);
+            genInterCodes(root);
+            if(!interError) printInterCode(fm, interCodeList);
         }
 
         deleteTable(table);

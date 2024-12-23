@@ -15,9 +15,9 @@ main()
         b += 1; 
     }
 
-    7shos
+    int shos;
 
-    write( a ); /* woshidabian
+    write( a ); /* woshidabian */
 
     int i = 5;
 }

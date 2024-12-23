@@ -61,8 +61,18 @@ ID       	 b
 NUM      	 1
 ;        	 ;
 }        	 }
+ID       	 int
+ID       	 shos
+;        	 ;
 KEY      	 write
 (        	 (
 ID       	 a
 )        	 )
 ;        	 ;
+COMMENT  	 /* woshidabian */
+ID       	 int
+ID       	 i
+=        	 =
+NUM      	 5
+;        	 ;
+}        	 }

@@ -1,0 +1,459 @@
+Program  (1)
+  ExtDefList  (1)
+    CodeDec  (1)
+      Specifier  (1)
+        StructSpecifier  (1)
+          STRUCT
+          OptTag  (1)
+            ID:  FastFood
+          LC:  {
+          DefList  (2)
+            Def  (2)
+              Specifier  (2)
+                TYPE
+              DecList  (2)
+                Dec  (2)
+                  VarDec  (2)
+                    ID:  yum
+              SEMI:  ;
+          RC:  }
+      SEMI:  ;
+    ExtDefList  (5)
+      CodeDec  (5)
+        Specifier  (5)
+          StructSpecifier  (5)
+            STRUCT
+            OptTag  (5)
+              ID:  Burger
+            LC:  {
+            DefList  (6)
+              Def  (6)
+                Specifier  (6)
+                  TYPE
+                DecList  (6)
+                  Dec  (6)
+                    VarDec  (6)
+                      ID:  juice
+                SEMI:  ;
+            RC:  }
+        SEMI:  ;
+      ExtDefList  (9)
+        CodeDec  (9)
+          Specifier  (9)
+            TYPE
+          FunDec  (9)
+            ID:  buyAFood
+            LP:  (
+            VarList  (9)
+              ParamDec  (9)
+                Specifier  (9)
+                  TYPE
+                VarDec  (9)
+                  ID:  money
+            RP:  )
+          FunBody  (9)
+            LC:  {
+            DefList  (10)
+              Def  (10)
+                Specifier  (10)
+                  StructSpecifier  (10)
+                    STRUCT
+                    Tag  (10)
+                      ID:  FastFood
+                DecList  (10)
+                  Dec  (10)
+                    VarDec  (10)
+                      ID:  cheap
+                SEMI:  ;
+              DefList  (11)
+                Def  (11)
+                  Specifier  (11)
+                    StructSpecifier  (11)
+                      STRUCT
+                      Tag  (11)
+                        ID:  Burger
+                  DecList  (11)
+                    Dec  (11)
+                      VarDec  (11)
+                        ID:  expensive
+                  SEMI:  ;
+                DefList  (12)
+                  Def  (12)
+                    Specifier  (12)
+                      TYPE
+                    DecList  (12)
+                      Dec  (12)
+                        VarDec  (12)
+                          ID:  realMoney
+                      COMMA:  ,
+                      DecList  (12)
+                        Dec  (12)
+                          VarDec  (12)
+                            ID:  Burgers
+                    SEMI:  ;
+            StatList  (13)
+              Statements  (13)
+                Expr  (13)
+                  Expr  (13)
+                    Expr  (13)
+                      ID:  cheap
+                    DOT:  .
+                    ID:  yum
+                  ASSIGNOP:  =
+                  Expr  (13)
+                    INT:  12
+              StatList  (14)
+                Statements  (14)
+                  Expr  (14)
+                    Expr  (14)
+                      Expr  (14)
+                        ID:  cheap
+                      DOT:  .
+                      ID:  yum
+                    ASSIGNOP:  =
+                    Expr  (14)
+                      INT:  3
+                StatList  (15)
+                  Statements  (15)
+                    Expr  (15)
+                      Expr  (15)
+                        Expr  (15)
+                          ID:  expensive
+                        DOT:  .
+                        ID:  juice
+                      ASSIGNOP:  =
+                      Expr  (15)
+                        INT:  3
+                  StatList  (16)
+                    Statements  (16)
+                      IF
+                      LP:  (
+                      Expr  (16)
+                        Expr  (16)
+                          Expr  (16)
+                            ID:  cheap
+                          DOT:  .
+                          ID:  yum
+                        RELOP
+                        Expr  (16)
+                          INT:  4
+                      RP:  )
+                      Statements  (16)
+                        FunBody  (16)
+                          LC:  {
+                          StatList  (17)
+                            Statements  (17)
+                              Expr  (17)
+                                Expr  (17)
+                                  ID:  realMoney
+                                ASSIGNOP:  =
+                                Expr  (17)
+                                  Expr  (17)
+                                    ID:  money
+                                  MINUS:  -
+                                  Expr  (17)
+                                    Expr  (17)
+                                      ID:  cheap
+                                    DOT:  .
+                                    ID:  yum
+                            StatList  (18)
+                              Statements  (18)
+                                RETURN
+                                Expr  (18)
+                                  ID:  realMoney
+                                SEMI:  ;
+                          RC:  }
+                      ELSE
+                      Statements  (19)
+                        FunBody  (19)
+                          LC:  {
+                          StatList  (20)
+                            Statements  (20)
+                              Expr  (20)
+                                Expr  (20)
+                                  ID:  Burgers
+                                ASSIGNOP:  =
+                                Expr  (20)
+                                  Expr  (20)
+                                    ID:  money
+                                  MINUS:  -
+                                  Expr  (20)
+                                    Expr  (20)
+                                      ID:  expensive
+                                    DOT:  .
+                                    ID:  juice
+                            StatList  (21)
+                              Statements  (21)
+                                RETURN
+                                Expr  (21)
+                                  ID:  Burgers
+                                SEMI:  ;
+                          RC:  }
+            RC:  }
+        ExtDefList  (24)
+          MainDec  (24)
+            Specifier  (24)
+              TYPE
+            MAIN
+            LP:  (
+            VarList  (24)
+              ParamDec  (24)
+                Specifier  (24)
+                  TYPE
+                VarDec  (24)
+                  ID:  argc
+            RP:  )
+            FunBody  (25)
+              LC:  {
+              DefList  (26)
+                Def  (26)
+                  Specifier  (26)
+                    TYPE
+                  DecList  (26)
+                    Dec  (26)
+                      VarDec  (26)
+                        ID:  b
+                  SEMI:  ;
+              StatList  (28)
+                Statements  (28)
+                  Expr  (28)
+                    Expr  (28)
+                      ID:  b
+                    ASSIGNOP:  =
+                    Expr  (28)
+                      ID:  buyAFood
+                      LP:  (
+                      Args  (28)
+                        Expr  (28)
+                          INT:  10
+                      RP:  )
+              RC:  }
+-------------------------------------- buyAFood's ComStat Body -------------------------------------
+------------------FiledList---------------
+    Field Name     : Burgers
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+-------------------------------
+    Field Name     : realMoney
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+-------------------------------
+    Field Name     : expensive
+    Field Type: 
+      Type Kind    : 2
+      [Structure]  : Struct Name = Burger
+    Fields as fllow:
+    Field Name     : juice
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+    Field List: NULL
+-------------------------------
+    Field Name     : cheap
+    Field Type: 
+      Type Kind    : 2
+      [Structure]  : Struct Name = FastFood
+    Fields as fllow:
+    Field Name     : yum
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+    Field List: NULL
+-------------------------------
+    Field Name     : money
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+-------------------------------
+
+-------------------------------------- buyAFood's ComStat Body -----------------------------------
+
+-------------------------------------- main's ComStat Body -------------------------------------
+------------------FiledList---------------
+    Field Name     : b
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+-------------------------------
+    Field Name     : argc
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+-------------------------------
+
+-------------------------------------- main's ComStat Body -----------------------------------
+
+==================================== Hash Table ====================================
+
+-- Bucket [98] --
+  [Symbol Name]  : b
+  [Symbol Depth] : 2
+  -------------------- Field List --------------------
+    Field Name     : b
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+  ------------------------------------------------------
+
+-- Bucket [1356] --
+  [Symbol Name]  : cheap
+  [Symbol Depth] : 1
+  -------------------- Field List --------------------
+    Field Name     : cheap
+    Field Type: 
+      Type Kind    : 2
+      [Structure]  : Struct Name = FastFood
+    Fields as fllow:
+    Field Name     : yum
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+    Field List: NULL
+  ------------------------------------------------------
+==================================== Hash Table ====================================
+-- Bucket [2211] --
+  [Symbol Name]  : Burgers
+  [Symbol Depth] : 1
+  -------------------- Field List --------------------
+    Field Name     : Burgers
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+  ------------------------------------------------------
+
+-- Bucket [3440] --
+  [Symbol Name]  : buyAFood
+  [Symbol Depth] : 0
+  -------------------- Field List --------------------
+    Field Name     : buyAFood
+    Field Type: 
+      Type Kind    : 3
+      [Function]   : Arg Count = 1
+    Arguments as fllow:
+    Field Name     : money
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+      Return Type:
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+  ------------------------------------------------------
+
+-- Bucket [4517] --
+  [Symbol Name]  : money
+  [Symbol Depth] : 1
+  -------------------- Field List --------------------
+    Field Name     : money
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+  ------------------------------------------------------
+==================================== Hash Table ====================================
+-- Bucket [8543] --
+  [Symbol Name]  : argc
+  [Symbol Depth] : 2
+  -------------------- Field List --------------------
+    Field Name     : argc
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+  ------------------------------------------------------
+
+-- Bucket [8718] --
+  [Symbol Name]  : Burger
+  [Symbol Depth] : 0
+  -------------------- Field List --------------------
+    Field Name     : Burger
+    Field Type: 
+      Type Kind    : 2
+      [Structure]  : Struct Name = NULL
+    Fields as fllow:
+    Field Name     : juice
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+    Field List: NULL
+  ------------------------------------------------------
+
+-- Bucket [9058] --
+  [Symbol Name]  : main
+  [Symbol Depth] : 1
+  -------------------- Field List --------------------
+    Field Name     : main
+    Field Type: 
+      Type Kind    : 3
+      [Function]   : Arg Count = 1
+    Arguments as fllow:
+    Field Name     : argc
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+      Return Type:
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+  ------------------------------------------------------
+
+-- Bucket [10796] --
+  [Symbol Name]  : FastFood
+  [Symbol Depth] : 0
+  -------------------- Field List --------------------
+    Field Name     : FastFood
+    Field Type: 
+      Type Kind    : 2
+      [Structure]  : Struct Name = NULL
+    Fields as fllow:
+    Field Name     : yum
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+    Field List: NULL
+  ------------------------------------------------------
+
+-- Bucket [10873] --
+  [Symbol Name]  : realMoney
+  [Symbol Depth] : 1
+  -------------------- Field List --------------------
+    Field Name     : realMoney
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+  ------------------------------------------------------
+
+-- Bucket [12237] --
+  [Symbol Name]  : expensive
+  [Symbol Depth] : 1
+  -------------------- Field List --------------------
+    Field Name     : expensive
+    Field Type: 
+      Type Kind    : 2
+      [Structure]  : Struct Name = Burger
+    Fields as fllow:
+    Field Name     : juice
+    Field Type: 
+      Type Kind    : 0
+      [Basic Type] : 0
+    Field List: NULL
+    Field List: NULL
+  ------------------------------------------------------
+==================================== End of Hash Table ============================

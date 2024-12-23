@@ -92,7 +92,7 @@ Program:                ExtDefList                                              
     ;
 ExtDefList:             CodeDec ExtDefList                                      { $$ = createNode(@$.first_line, NOT_A_TOKEN, "ExtDefList", 2, $1, $2);}
     |                   MainDec                                                 { $$ = createNode(@$.first_line, NOT_A_TOKEN, "ExtDefList", 1, $1);}
-    |                   error                                                   {synError = TRUE;  fprintf(stderr, "Need main function\n");}
+    //|                   error                                                   {synError = TRUE;  fprintf(stderr, "Need main function\n");}
     ;
 CodeDec:                Specifier FunDec FunBody                                {$$ = createNode(@$.first_line, NOT_A_TOKEN, "CodeDec", 3, $1, $2, $3); }
     |                   Specifier ExtDecList SEMI                               {$$ = createNode(@$.first_line, NOT_A_TOKEN, "CodeDec", 3, $1, $2, $3); }
@@ -144,7 +144,7 @@ Dec:                    VarDec                                                  
     ;
 VarDec:                 ID                                                      {$$ = createNode(@$.first_line, NOT_A_TOKEN, "VarDec", 1, $1); }
     |                   VarDec LB INT RB/*数组*/                                {$$ = createNode(@$.first_line, NOT_A_TOKEN, "VarDec", 4, $1, $2, $3, $4);  }
-    |                   VarDec LB error RB                                      {synError = TRUE;  fprintf(stderr, "Integer declarations are required in square brackets\n");}
+    |                   error RB                                      {synError = TRUE;  fprintf(stderr, "Integer declarations are required in square brackets\n");}
     ;   
 
 
@@ -163,14 +163,14 @@ Statements:             IF LP Expr RP Statements  %prec LOWER_THAN_ELSE         
     |                   RETURN Expr SEMI/*RETUN*/                               {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Statements", 3, $1, $2, $3);}  
     |                   error SEMI                                               {synError = TRUE;}
     ;       
-Expr:                   ID LP Args RP                                           {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 4, $1, $2, $3, $4);   }   
+Expr:                   Expr ASSIGNOP Expr                                   {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 3, $1, $2, $3);   }  
+    |                   ID LP Args RP                                           {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 4, $1, $2, $3, $4);   }   
     |                   ID LP RP                                                {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 3, $1, $2, $3);   }   
     |                   Expr DOT ID                                             {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 3, $1, $2, $3);   }   
     |                   Expr LB Expr RB                                          {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 4, $1, $2, $3, $4);   }   
     |                   NOT Expr                                            {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 2, $1, $2);   }
     |                   MINUS Expr                                            {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 2, $1, $2);   }
     |                   LP Expr RP                                              {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 3, $1, $2, $3);   }   
-    |                   Expr ASSIGNOP Expr                                   {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 3, $1, $2, $3);   }  
     |                   Expr RELOP Expr                                 {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 3, $1, $2, $3);   } 
     |                   Expr AND Expr                                   {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 3, $1, $2, $3);   }
     |                   Expr OR Expr                                    {$$ = createNode(@$.first_line, NOT_A_TOKEN, "Expr", 3, $1, $2, $3);   }

@@ -7,9 +7,9 @@ MAIN = main.c
 
 C_LEX = lex.yy.c
 C_SYN = syntax.tab.c
-C_SEM = semantic.c
+C_SEM = semantic.c inter.c
 H_SYN = syntax.tab.h 
-H_SEM = semantic.h
+H_SEM = semantic.h inter.h
 C_ALL = $(C_LEX) $(C_SEM) $(C_SYN)
 OBJS = $(C_ALL:.c=.o)
 

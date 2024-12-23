@@ -23,6 +23,7 @@ int buyAFood(int money) {
 }
 int main(int argc)
 {
-	int b = buyAFood(2);
-    int a = 1;
+    int b;
+
+	b = buyAFood(10);
 }

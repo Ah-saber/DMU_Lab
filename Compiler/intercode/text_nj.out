@@ -1,0 +1,39 @@
+FUNCTION buyAFood :
+PARAM money
+DEC cheap 4
+DEC expensive 4
+t2 := &cheap
+yum := t2 + #0
+*yum := #12
+t4 := &cheap
+yum := t4 + #0
+*yum := #3
+t6 := &expensive
+juice := t6 + #0
+*juice := #3
+t9 := &cheap
+yum := t9 + #0
+t9 := *yum
+IF t9 == #4 GOTO label1
+GOTO label2
+LABEL label1 :
+t12 := &cheap
+yum := t12 + #0
+t13 := *yum
+t10 := money - t13
+realMoney := t10
+RETURN realMoney
+GOTO label3
+LABEL label2 :
+t16 := &expensive
+juice := t16 + #0
+t17 := *juice
+t14 := money - t17
+Burgers := t14
+RETURN Burgers
+LABEL label3 :
+FUNCTION main :
+PARAM argc
+ARG #10
+t18 := CALL buyAFood
+b := t18

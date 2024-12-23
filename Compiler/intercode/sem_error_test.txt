@@ -1,0 +1,35 @@
+struct FastFood {
+int yum;
+};
+
+struct Burger {
+int juice;
+};
+
+int goushin(int x)
+{
+    int c = x * x;
+}
+
+int woshidabian(int a, int b)
+{
+    int c = a + b;
+    return c;
+}
+
+
+
+
+int main()
+{
+    struct FastFood cheap;
+	struct Burger expensive;
+    int a = cheap.gcc;
+
+    int a[10];
+    
+    woshidabian(10, 20, 30);
+    woshidabian();
+
+    return b;
+}
