@@ -1,0 +1,14 @@
+main()
+{
+    int a;
+    int b;
+    int c;
+    a=0;
+    read b;
+    
+    if(a<1) {
+        a = a + 1;
+        b = b + 1;
+    }
+    write b;
+}

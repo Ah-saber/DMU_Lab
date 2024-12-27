@@ -1,0 +1,18 @@
+function main2()
+{
+    int d;
+    int e;
+    d = 0;
+}
+main()
+{
+    int a;
+    int b;
+    int c;
+    b = 0;
+    
+    while(a>1) {
+        a = a - 1;
+    }
+    call main2();
+}

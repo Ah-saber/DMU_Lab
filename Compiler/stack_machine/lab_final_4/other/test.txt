@@ -1,0 +1,33 @@
+function fun1(){
+    int n;
+    read n;
+    n=n/3;
+    write n;
+}
+
+main(){
+    int i;
+    int j;
+    int sum;
+    int counter;
+
+    read i;
+    read j;
+
+    sum = i+j;
+    write sum;
+
+    if (i > j) {
+        write i;
+    } else {
+        write j;
+    }
+
+    counter = 0;
+    while(counter < i) {
+        counter = counter + 2;
+    }
+    write counter;
+
+    call fun1();
+}

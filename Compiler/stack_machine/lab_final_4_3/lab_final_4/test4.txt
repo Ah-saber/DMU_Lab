@@ -1,0 +1,16 @@
+main()
+{
+    int a;
+    int b;
+    a=1;
+    read b;
+    
+    for(a = 1; a < 5; a = a + 1)
+    {
+        write a;
+        b = b + 2;
+        write b;
+    }
+
+    write b;
+}

@@ -1,0 +1,16 @@
+function main2() {
+    int d;
+    read d;
+    write d;
+}
+main()
+{
+    int a;
+    int b;
+    int c;
+    a=1;
+    read b;
+    write b;
+    
+    call main2();
+}
