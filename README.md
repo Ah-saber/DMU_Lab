@@ -19,7 +19,7 @@
 
 南大编译原理24：https://web.archive.org/web/20240727181318/https://cs.nju.edu.cn/changxu/2_compiler/index.html
 
-南大编译原理开源实验参考（抄了不少代码😓）：https://github.com/UnableToCode/CompilerLab/tree/master
+南大编译原理开源实验参考（抄了他不少代码🙇‍）：https://github.com/UnableToCode/CompilerLab/tree/master
 
 Bison官方文档:https://www.gnu.org/software/bison/manual/bison.html#Lookahead
 
