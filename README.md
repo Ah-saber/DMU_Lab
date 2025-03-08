@@ -18,11 +18,19 @@
 ## 参考博客、课程网站
 
 南大编译原理24：https://web.archive.org/web/20240727181318/https://cs.nju.edu.cn/changxu/2_compiler/index.html
+
 南大编译原理开源实验参考（抄了不少代码😓）：https://github.com/UnableToCode/CompilerLab/tree/master
+
 Bison官方文档:https://www.gnu.org/software/bison/manual/bison.html#Lookahead
+
 lex/Bison入门：https://blog.csdn.net/weixin_44007632/article/details/108666375
+
 博客大佬：https://www.ruanyifeng.com/blog/
+
 Linux shell 极好的参考：https://www.ruanyifeng.com/blog/
+
 Linux 参考：https://drustz.com/posts/2015/09/27/step-by-step-shell1/#a0
+
 中科大Linux：https://101.lug.ustc.edu.cn/Ch02/#_2
+
 通俗易懂的Makefile教程：https://seisman.github.io/how-to-write-makefile/introduction.html#
