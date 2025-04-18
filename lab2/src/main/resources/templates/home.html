@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .mydiv {
+            margin: auto;
+            width: 350px;
+            text-align: left;
+        }
+    </style>
+    <title>商品信息管理系统</title>
+</head>
+<body bgcolor="#e0ffff">
+<br>
+<div style="text-align: center">
+    <h4 style="display: inline">用户&nbsp</h4><span th:text="${scode}"></span>
+    <h3>您好！欢迎使用商品信息管理系统</h3>
+    <div th:text="您在本站的注册信息如下" class="mydiv" style="height: 30px"></div>
+    <div th:text="'商家：'+${sname}" class="mydiv"></div>
+    <div th:text="'微信：'+${sweixin}" class="mydiv"></div>
+    <div th:text="'电话：'+${tel}" class="mydiv"></div>
+</div>
+</body>
+</html>

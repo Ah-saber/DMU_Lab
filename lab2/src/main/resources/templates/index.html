@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .mytd {
+            width: 80px;
+            font-size: xx-small;
+            color: red;
+        }
+    </style>
+    <title>商品信息管理系统</title>
+</head>
+<body bgcolor="#e0ffff">
+<br>
+<div style="text-align: center">
+    <form action="/check" method="post">
+        <table style="text-align: center;margin: auto">
+            <caption><h4>商 家 登 录&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</h4></caption>
+            <tr>
+                <td>用&nbsp户&nbsp</td>
+                <td><input th:type="text" name="scode" size="16" th:value="${scode}"></td>
+                <td class="mytd"><span th:if="${result.getCode()==404}" th:text="${result.getMsg()}"></span></td>
+            </tr>
+            <tr>
+                <td>密&nbsp码&nbsp</td>
+                <td><input th:type="password" name="spassword" size="16" th:value="${spassword}"></td>
+                <td class="mytd"><span th:if="${result.getCode()==403}" th:text="${result.getMsg()}"></span></td>
+            </tr>
+        </table>
+        <br>
+        <input th:type="submit" value="登 录">&nbsp&nbsp
+        <input th:type="reset" value="重 置">&nbsp&nbsp
+    </form>
+</div>
+</body>
+</html>

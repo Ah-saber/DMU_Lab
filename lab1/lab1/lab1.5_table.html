@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="style1.6.css">
+</head>
+<body bgcolor="#E3E3E3">
+<form action="" method="post">
+<table  width="500" bgcolor="silver">
+<caption>综合展现HTML标签</caption>
+    <tr bgcolor="silver">
+        <th>姓名：<input type="text" name="username" maxlength="10"></th>
+        <th>学号：<input type="text" name="id" maxlength="10" ></th>
+    </tr>
+    <tr bgcolor="silver">
+        <th>密码：<input type="password" name="pwd"></th>
+        <th>性别：<input name="sex" type="radio" checked>男
+            <input name="sex" type="radio">女</th>
+    </tr>
+    <tr >
+        <th colspan="2"> 爱好：<input name="fruit" type="checkbox" checked>体育
+        <input name="fruit" type="checkbox">唱歌
+        <input name="fruit" type="checkbox">书法
+        <input name="fruit" type="checkbox">游泳
+        </th>
+    </tr>
+    <tr>
+        <th>
+            专业：<select name="zy" size="1">
+            <option value="计算机">计算机</option>
+            <option value="英语">英语</option>
+            <option value="数学">数学</option>
+            <option value="电气工程">电气工程</option>
+            </select>
+        </th>
+        <th rowspan="2">
+            备注：<textarea rows="4" cols="46" maxlength="20">滚动文本框</textarea><br>
+        </th>
+    </tr>
+    <tr>
+        <th>
+            课程：<select name="kc" size="1" multiple>
+            <option value="计算机导论">计算机导论</option>
+            <option value="数据结构">数据结构</option>
+            <option value="软件工程">软件工程</option>
+            <option value="高等数学">高等数学</option>
+            <option value="离散数学">离散数学</option>
+            </select>
+        </th>
+    </tr>
+    <tr>
+        <th>
+            <input type="submit" value="提交"/>
+        </th>
+        <th>
+            <input type= "reset" value="重置"/>
+        </th>
+    </tr>
+
+</table>
+<p> p1 : 这是头部定义样式</p>
+<p> p2: 这也是头部样式</p>
+    <p class="myclass"> p3：这是myclass样式</p>
+    <p style="background-color: antiquewhite"> p4: 这是自己定义的样式</p>
+</form>
+</body>
+</html>
