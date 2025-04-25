@@ -17,7 +17,7 @@ public class SupRepositoryImpl implements SupRepository {
         try {
             String sql = "SELECT * FROM supplier WHERE SCode = ?"; //sql语句，查询商家记录
             Object args[] = {
-                    supplier.getScode()
+                    supplier.getSCode()
             };  //在传入find Supplier()方法的Supplier对象参数中获取商家编码实参值
             RowMapper<Supplier> rowMapper = new BeanPropertyRowMapper<Supplier>(Supplier.class);
             //RowMapper 是 jdbc Template中提供的类，查询数据库得到多列数据
