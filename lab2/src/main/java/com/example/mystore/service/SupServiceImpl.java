@@ -19,7 +19,7 @@ public class SupServiceImpl implements SupService {
             result.setCode(404);
             result.setMsg("用户不存在！");
         } else {
-            if (!supplier.getSPassWord().equals(supObj.getSPassWord())) {
+            if (!supplier.getSpassword().equals(supObj.getSpassword())) {
                 result.setCode(403);
                 result.setMsg("密码错！");
             } else {

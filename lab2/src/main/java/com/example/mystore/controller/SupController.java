@@ -24,14 +24,14 @@ public class SupController {
 
     @RequestMapping("/check")
     public String loginCheck(Model model, Supplier supplier) {
-        model.addAttribute("scode", supplier.getSCode());
-        model.addAttribute("spassword", supplier.getSPassWord());
+        model.addAttribute("scode", supplier.getScode());
+        model.addAttribute("spassword", supplier.getSpassword());
         Result result = supService.checkSupplier(supplier);
         model.addAttribute("result", result);
         if (result.getCode() == 200) {
             Supplier supObj = (Supplier) result.getData();
-            model.addAttribute("sname", supObj.getSName());
-            model.addAttribute("sweixin", supObj.getSWeiXin());
+            model.addAttribute("sname", supObj.getSname());
+            model.addAttribute("sweixin", supObj.getSweixin());
             model.addAttribute("tel", supObj.getTel());
             return "home";
         } else return "index";
