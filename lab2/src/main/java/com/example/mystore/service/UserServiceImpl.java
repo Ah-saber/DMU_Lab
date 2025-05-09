@@ -1,32 +1,32 @@
 package com.example.mystore.service;
 
 import com.example.mystore.core.Result;
-import com.example.mystore.entity.Supplier;
-import com.example.mystore.repository.SupRepository;
+import com.example.mystore.entity.User;
+import com.example.mystore.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SupServiceImpl implements SupService {
+public class UserServiceImpl implements UserService{
     @Autowired
-    private SupRepository supRepository;
+    private UserRepository userRepository;
 
     @Override
-    public Result checkSupplier(Supplier supplier) {
-        Supplier supObj = supRepository.findSupplier(supplier);
+    public Result checkUser(User user){
+        User useObj = userRepository.findUser(user);
         Result result = new Result();
-        result.setRole("商家");
-        if (supObj == null) {
+        result.setRole("顾客");
+        if (useObj == null) {
             result.setCode(404);
             result.setMsg("用户不存在！");
         } else {
-            if (!supplier.getSpassword().equals(supObj.getSpassword())) {
+            if (!user.getUpassword().equals(useObj.getUpassword())) {
                 result.setCode(403);
                 result.setMsg("密码错！");
             } else {
                 result.setCode(200);
                 result.setMsg("验证通过");
-                result.setData(supObj);
+                result.setData(useObj);
             }
         }
         return result;

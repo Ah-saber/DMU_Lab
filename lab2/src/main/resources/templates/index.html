@@ -16,15 +16,21 @@
 <div style="text-align: center">
     <form action="/check" method="post">
         <table style="text-align: center;margin: auto">
-            <caption><h4>商 家 登 录&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</h4></caption>
+            <caption><h4>用 户 登 录&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</h4></caption>
             <tr>
                 <td>用&nbsp户&nbsp</td>
-                <td><input th:type="text" name="scode" size="16" th:value="${scode}"></td>
+                <td>
+                    <input th:type="text" name="scode" size="16" th:value="${code}" th:if="${result.getRole()=='商家'}">
+                    <input th:type="text" name="ucode" size="16" th:value="${code}" th:if="${result.getRole()=='顾客'}">
+                </td>
                 <td class="mytd"><span th:if="${result.getCode()==404}" th:text="${result.getMsg()}"></span></td>
             </tr>
             <tr>
                 <td>密&nbsp码&nbsp</td>
-                <td><input th:type="password" name="spassword" size="16" th:value="${spassword}"></td>
+                <td>
+                    <input th:type="password" name="spassword" size="16" th:value="${password}" th:if="${result.getRole()=='商家'}">
+                    <input th:type="password" name="upassword" size="16" th:value="${password}" th:if="${result.getRole()=='顾客'}">
+                </td>
                 <td class="mytd"><span th:if="${result.getCode()==403}" th:text="${result.getMsg()}"></span></td>
             </tr>
         </table>

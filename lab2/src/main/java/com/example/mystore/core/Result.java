@@ -4,6 +4,7 @@ public class Result {
     private int code;
     private String msg;
     private Object data;
+    private String role;
 
     public int getCode() {
         return this.code;
@@ -27,5 +28,13 @@ public class Result {
 
     public void setData(Object data) {
         this.data = data;
+    }
+
+    public String getRole() {
+        return this.role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
